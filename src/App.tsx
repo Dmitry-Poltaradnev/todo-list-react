@@ -20,11 +20,7 @@ function App() {
         {id:2, title:'SecondBook', isDone: false},
         {id:3, title:'ThirdBook', isDone: false}
     ]
-    const task4 = [
-        {id:1, title:'FirstBook', isDone: false},
-        {id:2, title:'SecondBook', isDone: false},
-        {id:3, title:'ThirdBook', isDone: false}
-    ]
+
 
 
     return (
