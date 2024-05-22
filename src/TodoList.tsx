@@ -13,8 +13,15 @@ type TodoListPropsType = {
     massTasks: Array<massTaskPropsType>
     removeItem: (itemId: string) => void
     addItem: (title: string) => void
+    changeTaskStatus: (itemId: string, newIsDoneValue: boolean) => void
 }
-export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPropsType) => {
+export const TodoList = ({
+                             titleTask
+                             , massTasks
+                             , removeItem
+                             , addItem
+                             , changeTaskStatus
+                         }: TodoListPropsType) => {
 
     // UI logic filter
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed'>('All')
@@ -46,7 +53,11 @@ export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPr
     // ====
     const list =
         filteredTask.length === 0 ? <div>Your list is empty</div> : filteredTask.map(item => (
-            <li key={item.id}><input checked={item.isDone} type="checkbox"/>
+            <li className={item.isDone ? 'unActiveTask' : ''} key={item.id}>
+                <input
+                    onChange={(e) => changeTaskStatus(item.id, e.currentTarget.checked)}
+                    checked={item.isDone}
+                    type="checkbox"/>
                 <span>{item.title}</span>
                 <Button title='X' onClickHandler={() => removeItem(item.id)}/>
             </li>
@@ -72,9 +83,18 @@ export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPr
                     {list}
                 </ul>
             </div>
-            <Button onClickHandler={() => changeFilter('All')} title='All'/>
-            <Button onClickHandler={() => changeFilter('Completed')} title='Completed'/>
-            <Button onClickHandler={() => changeFilter('Active')} title='Active'/>
+            <Button
+                classes={filter === 'All' ? 'activeFilter' : ''}
+                onClickHandler={() => changeFilter('All')}
+                title='All'/>
+            <Button
+                classes={filter === 'Completed' ? 'activeFilter' : ''}
+                onClickHandler={() => changeFilter('Completed')}
+                title='Completed'/>
+            <Button
+                classes={filter === 'Active' ? 'activeFilter' : ''}
+                onClickHandler={() => changeFilter('Active')}
+                title='Active'/>
         </div>
     );
 }

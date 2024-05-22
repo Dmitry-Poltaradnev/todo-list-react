@@ -2,14 +2,27 @@
     padding: 30px;
     display: flex;
 }
-*{
+
+* {
     list-style: none;
 }
+
 .App > div {
     margin-right: 50px;
 }
-.todoList{
+
+.todoList {
     background-color: aqua;
     padding: 20px;
     border-radius: 5px;
+}
+
+.activeFilter {
+    background-color: yellow;
+    border-radius: 3px;
+}
+
+.unActiveTask {
+    opacity: .5;
+    text-decoration: line-through;
 }
