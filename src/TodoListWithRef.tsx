@@ -1,4 +1,4 @@
-import React, {useState, KeyboardEvent} from 'react';
+import React, {useRef, useState} from 'react';
 import {Button} from "./Button";
 import {FilterValuesType} from "./App";
 
@@ -14,7 +14,7 @@ type TodoListPropsType = {
     removeItem: (itemId: string) => void
     addItem: (title: string) => void
 }
-export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPropsType) => {
+export const TodoListWithRef = ({titleTask, massTasks, removeItem, addItem}: TodoListPropsType) => {
 
     // UI logic filter
     const [filter, setFilter] = useState<'All' | 'Active' | 'Completed'>('All')
@@ -33,14 +33,14 @@ export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPr
     }
     const filteredTask: Array<massTaskPropsType> = getFilteredTask(massTasks, filter)
     // ====
-    // add item logic
-    const [stateTitle, setStateTitle] = useState('')
-    console.log(stateTitle)
 
+    // add item logic
+    const inputRef = useRef<HTMLInputElement>(null)
     const onClickInput = () => {
-        if (stateTitle.trim().length !== 0) {
-            addItem(stateTitle)
-            setStateTitle('')
+        if (inputRef.current && inputRef.current.value.trim() !== '') {
+            const item = inputRef.current.value.trim()
+            addItem(item)
+            inputRef.current.value = ''
         }
     }
     // ====
@@ -55,18 +55,10 @@ export const TodoList = ({titleTask, massTasks, removeItem, addItem}: TodoListPr
     return (
         <div className={'todoList'}>
             <h3>{titleTask}</h3>
-            {stateTitle.length > 20 && <div>Max name length is 20 symbols</div>}
             <div>
-                <input
-                    value={stateTitle}
-                    onChange={e => setStateTitle(e.currentTarget.value)}
-                    onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && stateTitle ? onClickInput() : ''}
-                    type='text'/>
-                <Button disabled={stateTitle.trim().length === 0 || stateTitle.length > 20}
-                        onClickHandler={onClickInput}
-                        title='Add task'/>
+                <input ref={inputRef} type='text'/>
+                <Button onClickHandler={onClickInput} title='Add task'/>
             </div>
-            {stateTitle.length > 10 && <div>The name of your task is too big</div>}
             <div>
                 <ul>
                     {list}
