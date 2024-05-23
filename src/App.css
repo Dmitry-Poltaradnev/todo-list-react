@@ -26,3 +26,7 @@
     opacity: .5;
     text-decoration: line-through;
 }
+.task-input-error{
+    border: 2px solid red;
+    outline: none;
+}
