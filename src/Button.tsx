@@ -1,6 +1,6 @@
 type ButtonPropsType = {
     title: string
-    onClick?:()=> void
+    onClick?: () => void
     className?: string
 }
 
