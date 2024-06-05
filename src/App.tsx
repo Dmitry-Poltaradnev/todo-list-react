@@ -65,20 +65,31 @@ function App() {
         setTasks({...tasks, [todoListId]: tasks[todoListId].map(i => taskId === i.id ? {...i, isDone: taskStatus} : i)})
     }
 
+    const updateTask = (todoListId: string, taskId: string, title: string) => {
+        setTasks({...tasks, [todoListId]: tasks[todoListId].map(i => i.id === taskId ? {...i, title} : i)})
+    }
+    // ====
+    const updateTodoListTitle = (todoListId: string, title: string) => {
+        setTodolists(todolists.map(i => i.id === todoListId ? {...i, title} : i))
+    }
+    // ====
+
     const addTodoList = (title: string) => {
         const id = v1()
-        const newList = {id: id, title: title, filter: 'all'}
+        const newList: TodolistType = {id: id, title: title, filter: 'all'}
+        setTodolists([...todolists, newList])
+        setTasks({...tasks, [id]: []})
     }
-
-
 
     return (
         <div className="App">
-            <AddItemForm addItem={addTodoList} />
+            <AddItemForm addItem={addTodoList}/>
             {todolists.map(i => {
                 let tasksForTodolist = tasks[i.id]
 
                 return (<Todolist
+                    updateTodoListTitle={updateTodoListTitle}
+                    updateTask={updateTask}
                     removeTodoList={removeTodoList}
                     key={i.id}
                     todoListId={i.id}
@@ -90,7 +101,6 @@ function App() {
                 />)
             })
             }
-
         </div>
     );
 }
