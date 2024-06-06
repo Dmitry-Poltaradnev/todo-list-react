@@ -46,13 +46,13 @@ export const Todolist = ({
 
     const newFilteredTasks = getFilterTodolist(tasks, filter)
 
+    const changeTitleTaskHandler = (newTitle: string, taskId: string) => {
+        updateTask(todoListId, taskId, newTitle)
+    }
+
 
     const tasksList = <ul>
         {newFilteredTasks.map((task) => {
-
-            const changeTitleTaskHandler = (newTitle: string) => {
-                updateTask(todoListId, task.id, newTitle)
-            }
 
             const removeTaskHandler = () => {
                 removeTask(todoListId, task.id)
@@ -65,7 +65,8 @@ export const Todolist = ({
 
             return <li key={task.id} className={task.isDone ? 'is-done' : ''}>
                 <input type="checkbox" checked={task.isDone} onChange={changeTaskStatusHandler}/>
-                <EditableSpan changeTitleHandler={changeTitleTaskHandler} oldTitle={task.title}/>
+                <EditableSpan changeTitleHandler={(newTitle) => changeTitleTaskHandler(newTitle, task.id)}
+                              oldTitle={task.title}/>
                 <Button onClick={removeTaskHandler} title={'x'}/>
             </li>
         })}
