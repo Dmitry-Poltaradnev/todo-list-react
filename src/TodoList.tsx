@@ -9,8 +9,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Checkbox from '@mui/material/Checkbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-
 import Button from '@mui/material/Button';
+import Box from "@mui/material/Box";
+import {filterButtonsContainerSx, ListItemSx} from "./TodoList.styles";
 
 
 type PropsType = {
@@ -72,9 +73,10 @@ export const Todolist = ({
                 changeTaskStatus(todoListId, task.id, newStatusValue)
             }
 
-            return <ListItem key={task.id} className={task.isDone ? 'is-done' : ''}>
+            return <ListItem
+                sx={ListItemSx(task.isDone)}
+                key={task.id}>
                 <Checkbox checked={task.isDone} onChange={changeTaskStatusHandler}/>
-                {/*<input type="checkbox" checked={task.isDone} onChange={changeTaskStatusHandler}/>*/}
                 <EditableSpan changeTitleHandler={(newTitle) => changeTitleTaskHandler(newTitle, task.id)}
                               oldTitle={task.title}/>
                 <IconButton onClick={removeTaskHandler} aria-label="delete">
@@ -108,14 +110,14 @@ export const Todolist = ({
                     ? <p>Task list is empty</p>
                     : tasksList
             }
-            <div>
+            <Box sx={filterButtonsContainerSx}>
                 <Button onClick={() => changeFilter('all')}
                         variant={filter === 'all' ? "outlined" : "contained"}>All</Button>
                 <Button onClick={() => changeFilter('active')}
                         variant={filter === 'active' ? "outlined" : "contained"}>Active</Button>
                 <Button onClick={() => changeFilter('completed')}
                         variant={filter === 'completed' ? "outlined" : "contained"}>Completed</Button>
-            </div>
+            </Box>
         </div>
     )
 }

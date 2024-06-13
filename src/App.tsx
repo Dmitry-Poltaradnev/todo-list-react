@@ -4,14 +4,9 @@ import {useState} from "react";
 import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
 
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 
 export type TaskType = {
     id: string
@@ -34,6 +29,7 @@ let todolistID2 = v1()
 export type FilterValuesType = 'all' | 'active' | 'completed'
 
 function App() {
+
 
     let [todolists, setTodolists] = useState<TodolistType[]>([
         {id: todolistID1, title: 'What to learn', filter: 'all'},
@@ -91,50 +87,35 @@ function App() {
     return (
         <div className="App">
 
-            <Box sx={{flexGrow: 1}}>
-                <AppBar position="static">
-                    <Toolbar>
-                        <IconButton
-                            size="large"
-                            edge="start"
-                            color="inherit"
-                            aria-label="menu"
-                            sx={{mr: 2}}
-                        >
-                            <MenuIcon/>
-                        </IconButton>
-                        <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                            News
-                        </Typography>
-                        <Button color="inherit">Login</Button>
-                    </Toolbar>
-                </AppBar>
-            </Box>
-
-
             <Container style={{minWidth: '1700px'}} fixed>
-                <AddItemForm addItem={addTodoList}/>
-                {todolists.map(i => {
-                    let tasksForTodolist = tasks[i.id]
+                <Grid sx={{m: '40px 0px'}} container>
+                    <AddItemForm addItem={addTodoList}/>
+                </Grid>
+                <Grid container>
+                    {todolists.map(i => {
+                        let tasksForTodolist = tasks[i.id]
 
-                    return (<Todolist
-                        updateTodoListTitle={updateTodoListTitle}
-                        updateTask={updateTask}
-                        removeTodoList={removeTodoList}
-                        key={i.id}
-                        todoListId={i.id}
-                        title={i.title}
-                        tasks={tasksForTodolist}
-                        removeTask={removeTask}
-                        addTask={addTask}
-                        changeTaskStatus={changeTaskStatus}
-                    />)
-                })
-                }
+                        return (
+                            <Grid sx={{m: '20px'}} item>
+                                <Paper sx={{p: '20px'}} elevation={12}>
+                                    <Todolist
+                                        updateTodoListTitle={updateTodoListTitle}
+                                        updateTask={updateTask}
+                                        removeTodoList={removeTodoList}
+                                        key={i.id}
+                                        todoListId={i.id}
+                                        title={i.title}
+                                        tasks={tasksForTodolist}
+                                        removeTask={removeTask}
+                                        addTask={addTask}
+                                        changeTaskStatus={changeTaskStatus}
+                                    />
+                                </Paper>
+                            </Grid>
+                        )
+                    })}
+                </Grid>
             </Container>
-
-
-
         </div>
     );
 }
