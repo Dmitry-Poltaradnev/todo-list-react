@@ -1,4 +1,4 @@
-import {FilterValuesType, TaskType} from "./App";
+import {FilterValuesType, TaskType, TodolistType} from "./App";
 import {ChangeEvent, useState} from "react";
 // import {Button} from "./Button";
 import {AddItemForm} from "./AddItemForm";
