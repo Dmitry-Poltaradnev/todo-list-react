@@ -1,73 +1,71 @@
 import {TodolistType} from "../App";
 import {v1} from "uuid";
 
-
 export const todoListReducer = (state: TodolistType[], action: TodoListReducerType): TodolistType[] => {
     switch (action.type) {
-        case  'REMOVE-TODOlIST' : {
-            return state.filter(el => el.id !== action.payload.id)
+        case 'REMOVE-TODOLIST': {
+            return state.filter(el => el.id !== action.payload.id);
         }
-        // Todo: you need to fix add-todolist
-        case  'ADD-TODOLIST' : {
-            const newTodoList: TodolistType = {id: v1(), title: action.payload.title, filter: 'all'}
-            console.log(newTodoList)
-            return [...state, newTodoList]
+        case 'ADD-TODOLIST': {
+            const newTodoList: TodolistType = {id: action.payload.id, title: action.payload.title, filter: 'all'};
+            return [...state, newTodoList];
         }
-        case  'UPDATE-TODOlIST-TITLE' : {
-            return state.map(el => el.id === action.payload.todoListId ? {...el, title: action.payload.title} : el)
+        case 'UPDATE-TODOLIST-TITLE': {
+            return state.map(el => el.id === action.payload.todoListId ? {...el, title: action.payload.title} : el);
         }
         default:
-            return state
+            return state;
     }
-}
+};
 
-type TodoListReducerType = RemoveTodoList | AddTodoList | UpdateTodoListTitle
+type TodoListReducerType = RemoveTodoList | AddTodoList | UpdateTodoListTitle;
 
 export const UpdateTodoListTitleAC = (todoListId: string, title: string): UpdateTodoListTitle => {
     return {
-        type: 'UPDATE-TODOlIST-TITLE',
+        type: 'UPDATE-TODOLIST-TITLE',
         payload: {
             todoListId,
             title
         }
     }
-}
+};
 type UpdateTodoListTitle = {
-    type: 'UPDATE-TODOlIST-TITLE'
+    type: 'UPDATE-TODOLIST-TITLE',
     payload: {
         todoListId: string,
         title: string
     }
-}
+};
 
-// =======
 export const AddTodoListAC = (title: string): AddTodoList => {
+    const  id = v1() // генерируем новый id
     return {
         type: 'ADD-TODOLIST',
         payload: {
+            id,
             title
         }
-    } as const
-}
+    };
+};
 type AddTodoList = {
     type: 'ADD-TODOLIST',
     payload: {
+        id: string,
         title: string
     }
-}
+};
 
-// =====
 export const RemoveTodoListAC = (id: string): RemoveTodoList => {
     return {
-        type: 'REMOVE-TODOlIST',
+        type: 'REMOVE-TODOLIST',
         payload: {
             id
         }
-    } as const
-}
+    };
+};
 type RemoveTodoList = {
-    type: 'REMOVE-TODOlIST'
+    type: 'REMOVE-TODOLIST',
     payload: {
         id: string
     }
-}
+};
