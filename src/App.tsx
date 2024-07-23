@@ -51,56 +51,33 @@ function App() {
 
     const removeTodoList = (id: string) => {
         dispatchTodolist(RemoveTodoListAC(id))
-        // setTodolists(todolists.filter(i => i.id !== todoListId))
     }
+
     const updateTodoListTitle = (todoListId: string, title: string) => {
         dispatchTodolist(UpdateTodoListTitleAC(todoListId, title))
-        // setTodolists(todolists.map(i => i.id === todoListId ? {...i, title} : i))
     }
 
 
-    const addTodoList = (title: string ) => {
+    const addTodoList = (title: string) => {
         const action = AddTodoListAC(title);
         dispatchTodolist(action);
-        dispatchTasks(action); // Передаем действие также в редьюсер задач
+        dispatchTasks(action);
     };
 
-
-
-
-    // const addTodoList = (title: string ) => {
-    //     dispatchTodolist(AddTodoListAC(title))
-        // const id = v1()
-        // const newList: TodolistType = {id: id, title: title, filter: 'all'}
-        // setTodolists([...todolists, newList])
-        // setTasks({...tasks, [id]: []})
-        // ======
-    // }
-    // =========
     const removeTask = (todoListId: string, taskId: string) => {
         dispatchTasks(RemoveTaskAC(todoListId, taskId))
-        // setTasks({...tasks, [todoListId]: tasks[todoListId].filter(i => taskId !== i.id)})
     }
 
     const addTask = (todoListId: string, title: string) => {
         dispatchTasks(AddTaskAC(todoListId, title))
-        // const newTask = {
-        //     id: v1(),
-        //     title: title,
-        //     isDone: false
-        // }
-        // const newTasks = {...tasks, [todoListId]: [...tasks[todoListId], newTask]};
-        // setTasks(newTasks)
     }
 
     const changeTaskStatus = (todoListId: string, taskId: string, taskStatus: boolean) => {
         dispatchTasks(ChangeTaskStatusAC(todoListId, taskId, taskStatus))
-        // setTasks({...tasks, [todoListId]: tasks[todoListId].map(i => taskId === i.id ? {...i, isDone: taskStatus} : i)})
     }
 
     const updateTask = (todoListId: string, taskId: string, title: string) => {
         dispatchTasks(UpdateTaskTitleAC(todoListId, taskId, title))
-        // setTasks({...tasks, [todoListId]: tasks[todoListId].map(i => i.id === taskId ? {...i, title} : i)})
     }
 
 

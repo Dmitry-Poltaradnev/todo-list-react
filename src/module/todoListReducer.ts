@@ -4,14 +4,16 @@ import {v1} from "uuid";
 export const todoListReducer = (state: TodolistType[], action: TodoListReducerType): TodolistType[] => {
     switch (action.type) {
         case 'REMOVE-TODOLIST': {
-            return state.filter(el => el.id !== action.payload.id);
+            const {id} = action.payload
+            return state.filter(el => el.id !== id);
         }
         case 'ADD-TODOLIST': {
-            const newTodoList: TodolistType = {id: action.payload.id, title: action.payload.title, filter: 'all'};
-            return [...state, newTodoList];
+            const {id, title} = action.payload
+            return [...state, {id: id, title, filter: 'all'}]
         }
         case 'UPDATE-TODOLIST-TITLE': {
-            return state.map(el => el.id === action.payload.todoListId ? {...el, title: action.payload.title} : el);
+            const {todoListId, title} = action.payload
+            return state.map(el => el.id === todoListId ? {...el, title} : el);
         }
         default:
             return state;
@@ -38,7 +40,7 @@ type UpdateTodoListTitle = {
 };
 
 export const AddTodoListAC = (title: string): AddTodoList => {
-    const  id = v1() // генерируем новый id
+    const id = v1() // генерируем новый id
     return {
         type: 'ADD-TODOLIST',
         payload: {

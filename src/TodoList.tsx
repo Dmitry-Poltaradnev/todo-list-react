@@ -1,6 +1,5 @@
-import {FilterValuesType, TaskType, TodolistType} from "./App";
+import {FilterValuesType, TaskType} from "./App";
 import {ChangeEvent, useState} from "react";
-// import {Button} from "./Button";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 
@@ -59,7 +58,6 @@ export const Todolist = ({
     const changeTitleTaskHandler = (newTitle: string, taskId: string) => {
         updateTask(todoListId, taskId, newTitle)
     }
-
 
     const tasksList = <List>
         {newFilteredTasks.map((task) => {

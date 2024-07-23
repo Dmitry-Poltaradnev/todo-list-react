@@ -4,33 +4,25 @@ import {v1} from "uuid";
 export const taskReducer = (state: TasksPropsType, action: TaskReducerType): TasksPropsType => {
     switch (action.type) {
         case 'REMOVE-TASK': {
-            const stateCopy = {...state};
-            stateCopy[action.payload.todoListId] = stateCopy[action.payload.todoListId].filter(task => task.id !== action.payload.taskId);
-            return stateCopy;
+            const {todoListId, taskId} = action.payload
+            return {...state, [todoListId]: state[todoListId].filter(el => el.id !== taskId)}
         }
         case 'ADD-TASK': {
-            const newTask = {id: v1(), title: action.payload.title, isDone: false};
-            const stateCopy = {...state};
-            stateCopy[action.payload.todoListId] = [...stateCopy[action.payload.todoListId], newTask];
-            return stateCopy;
+            const {todoListId, title} = action.payload
+            return {...state, [todoListId]: [...state[todoListId], {id: v1(), title, isDone: false},]}
         }
         case 'CHANGE-TASK-STATUS': {
-            const stateCopy = {...state};
-            const tasks = stateCopy[action.payload.todoListId];
-            stateCopy[action.payload.todoListId] = tasks.map(task => task.id === action.payload.taskId ? {
-                ...task,
-                isDone: action.payload.isDone
-            } : task);
-            return stateCopy;
+            const {todoListId, taskId, isDone} = action.payload
+            return {
+                ...state,
+                [todoListId]: state[todoListId].map(el => el.id === taskId ? {...el, isDone} : el)
+            }
         }
         case 'UPDATE-TASK-TITLE': {
-            const stateCopy = {...state};
-            const tasks = stateCopy[action.payload.todoListId];
-            stateCopy[action.payload.todoListId] = tasks.map(task => task.id === action.payload.taskId ? {
-                ...task,
-                title: action.payload.title
-            } : task);
-            return stateCopy;
+            const {todoListId, taskId, title} = action.payload
+            return {
+                ...state, [todoListId]: state[todoListId].map(el => el.id === taskId ? {...el, title} : el)
+            }
         }
         case 'ADD-TODOLIST': {
             return {
@@ -124,7 +116,7 @@ export const AddTodoListAC = (title: string): AddTodoList => {
             id: v1(), // генерируем новый id
             title
         }
-    };
+    }
 };
 type AddTodoList = {
     type: 'ADD-TODOLIST',
