@@ -1,7 +1,9 @@
 import {TasksPropsType} from "../App";
 import {v1} from "uuid";
 
-export const taskReducer = (state: TasksPropsType, action: TaskReducerType): TasksPropsType => {
+const initialTasksState: TasksPropsType = {}; // начальное состояние для задач
+
+export const taskReducer = (state: TasksPropsType = initialTasksState, action: TaskReducerType): TasksPropsType => {
     switch (action.type) {
         case 'REMOVE-TASK': {
             const {todoListId, taskId} = action.payload
