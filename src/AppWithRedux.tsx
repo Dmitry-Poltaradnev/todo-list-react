@@ -1,9 +1,6 @@
 import './App.css';
 import {Todolist} from "./TodoList";
-import {useReducer} from "react";
-import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
-
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -27,35 +24,14 @@ export type TasksPropsType = {
     [key: string]: TaskType[]
 }
 
-let todolistID1 = v1()
-let todolistID2 = v1()
-
 export type FilterValuesType = 'all' | 'active' | 'completed'
 
 function App() {
 
-
-    let todolists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
-    let tasks = useSelector<AppRootStateType, TasksPropsType>(state => state.tasks)
+    const todolists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
+    const tasks = useSelector<AppRootStateType, TasksPropsType>(state => state.tasks)
 
     const dispatch = useDispatch()
-
-    // let [todolists, dispatchTodolist] = useReducer(todoListReducer, [
-    //     {id: todolistID1, title: 'What to learn', filter: 'all'},
-    //     {id: todolistID2, title: 'What to buy', filter: 'all'},
-    // ])
-
-    // let [tasks, dispatchTasks] = useReducer(taskReducer, {
-    //     [todolistID1]: [
-    //         {id: v1(), title: 'HTML&CSS', isDone: true},
-    //         {id: v1(), title: 'JS', isDone: true},
-    //         {id: v1(), title: 'ReactJS', isDone: false},
-    //     ],
-    //     [todolistID2]: [
-    //         {id: v1(), title: 'Rest API', isDone: true},
-    //         {id: v1(), title: 'GraphQL', isDone: false},
-    //     ],
-    // })
 
     const removeTodoList = (id: string) => {
         dispatch(RemoveTodoListAC(id))
