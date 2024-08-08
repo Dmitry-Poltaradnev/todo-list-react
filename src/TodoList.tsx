@@ -1,5 +1,5 @@
 import {FilterValuesType, TaskType} from "./App";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, memo, useCallback, useState} from "react";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 
@@ -12,30 +12,30 @@ import Button from '@mui/material/Button';
 import Box from "@mui/material/Box";
 import {filterButtonsContainerSx, ListItemSx} from "./TodoList.styles";
 
-
 type PropsType = {
-    updateTask: (todoListId: string, taskId: string, task: string,) => void
-    updateTodoListTitle: (todoListId: string, title: string) => void
     todoListId: string
     title: string
     tasks: TaskType[]
+    updateTask: (todoListId: string, taskId: string, task: string) => void
+    updateTodoListTitle: (todoListId: string, title: string) => void
     removeTask: (todoListId: string, taskId: string) => void
     addTask: (todoListId: string, title: string) => void
     changeTaskStatus: (todoListId: string, taskId: string, taskStatus: boolean) => void
     removeTodoList: (todoListId: string) => void
 }
 
-export const Todolist = ({
-                             title,
-                             tasks,
-                             removeTask,
-                             addTask,
-                             changeTaskStatus,
-                             todoListId,
-                             removeTodoList,
-                             updateTask,
-                             updateTodoListTitle
-                         }: PropsType) => {
+export const Todolist = memo(({
+                                  title,
+                                  tasks,
+                                  removeTask,
+                                  addTask,
+                                  changeTaskStatus,
+                                  todoListId,
+                                  removeTodoList,
+                                  updateTask,
+                                  updateTodoListTitle
+                              }: PropsType) => {
+
 
     const [filter, setFilter] = useState<FilterValuesType>('all')
 
@@ -84,9 +84,9 @@ export const Todolist = ({
         })}
     </List>
 
-    const addTaskHandler = (title: string) => {
+    const addTaskHandler = useCallback((title: string) => {
         addTask(todoListId, title)
-    }
+    }, [addTask, todoListId])
 
     const changeTodoListTitleHandler = (title: string) => {
         updateTodoListTitle(todoListId, title)
@@ -118,4 +118,4 @@ export const Todolist = ({
             </Box>
         </div>
     )
-}
+})

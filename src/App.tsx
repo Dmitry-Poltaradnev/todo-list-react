@@ -72,6 +72,7 @@ function App() {
         dispatchTasks(AddTaskAC(todoListId, title))
     }
 
+
     const changeTaskStatus = (todoListId: string, taskId: string, taskStatus: boolean) => {
         dispatchTasks(ChangeTaskStatusAC(todoListId, taskId, taskStatus))
     }
@@ -90,7 +91,6 @@ function App() {
                 <Grid container>
                     {todolists.map(i => {
                         let tasksForTodolist = tasks[i.id]
-
                         return (
                             <Grid sx={{m: '20px'}} item>
                                 <Paper sx={{p: '20px'}} elevation={12}>

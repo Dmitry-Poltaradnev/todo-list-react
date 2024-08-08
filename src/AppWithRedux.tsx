@@ -4,10 +4,11 @@ import {AddItemForm} from "./AddItemForm";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import {AddTaskAC, ChangeTaskStatusAC, RemoveTaskAC, taskReducer, UpdateTaskTitleAC} from "./module/taskReducer";
-import {AddTodoListAC, RemoveTodoListAC, todoListReducer, UpdateTodoListTitleAC} from "./module/todoListReducer";
+import {AddTaskAC, ChangeTaskStatusAC, RemoveTaskAC, UpdateTaskTitleAC} from "./module/taskReducer";
+import {AddTodoListAC, RemoveTodoListAC, UpdateTodoListTitleAC} from "./module/todoListReducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./store";
+import {useCallback} from "react";
 
 export type TaskType = {
     id: string
@@ -33,33 +34,33 @@ function App() {
 
     const dispatch = useDispatch()
 
-    const removeTodoList = (id: string) => {
+    const removeTodoList = useCallback((id: string) => {
         dispatch(RemoveTodoListAC(id))
-    }
+    }, [dispatch])
 
-    const updateTodoListTitle = (todoListId: string, title: string) => {
+    const updateTodoListTitle = useCallback((todoListId: string, title: string) => {
         dispatch(UpdateTodoListTitleAC(todoListId, title))
-    }
+    }, [dispatch])
 
-    const addTodoList = (title: string) => {
+    const addTodoList = useCallback((title: string) => {
         dispatch(AddTodoListAC(title));
-    };
+    }, [dispatch]);
 
-    const removeTask = (todoListId: string, taskId: string) => {
+    const removeTask = useCallback((todoListId: string, taskId: string) => {
         dispatch(RemoveTaskAC(todoListId, taskId))
-    }
+    }, [dispatch])
 
-    const addTask = (todoListId: string, title: string) => {
+    const addTask = useCallback((todoListId: string, title: string) => {
         dispatch(AddTaskAC(todoListId, title))
-    }
+    }, [dispatch])
 
-    const changeTaskStatus = (todoListId: string, taskId: string, taskStatus: boolean) => {
+    const changeTaskStatus = useCallback((todoListId: string, taskId: string, taskStatus: boolean) => {
         dispatch(ChangeTaskStatusAC(todoListId, taskId, taskStatus))
-    }
+    }, [dispatch])
 
-    const updateTask = (todoListId: string, taskId: string, title: string) => {
+    const updateTask = useCallback((todoListId: string, taskId: string, title: string) => {
         dispatch(UpdateTaskTitleAC(todoListId, taskId, title))
-    }
+    }, [dispatch])
 
 
     return (
@@ -71,7 +72,6 @@ function App() {
                 <Grid container>
                     {todolists.map(i => {
                         let tasksForTodolist = tasks[i.id]
-
                         return (
                             <Grid sx={{m: '20px'}} item>
                                 <Paper sx={{p: '20px'}} elevation={12}>
