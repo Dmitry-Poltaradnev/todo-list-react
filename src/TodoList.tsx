@@ -88,9 +88,9 @@ export const Todolist = memo(({
         addTask(todoListId, title)
     }, [addTask, todoListId])
 
-    const changeTodoListTitleHandler = (title: string) => {
+    const changeTodoListTitleHandler = useCallback((title: string) => {
         updateTodoListTitle(todoListId, title)
-    }
+    }, [updateTodoListTitle, todoListId])
 
     return (
         <div>

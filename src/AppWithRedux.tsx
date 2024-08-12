@@ -62,7 +62,6 @@ function App() {
         dispatch(UpdateTaskTitleAC(todoListId, taskId, title))
     }, [dispatch])
 
-
     return (
         <div className="App">
             <Container style={{minWidth: '1700px'}} fixed>
