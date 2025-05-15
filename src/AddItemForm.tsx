@@ -36,7 +36,6 @@ export const AddItemForm = memo(({addItem}: AddItemFormPropsType) => {
             <TextField error={!!error} value={taskTitle} onKeyUp={addTaskOnKeyUpHandler}
                        onChange={changeItemTitleHandler} id="outlined-basic" label="Enter a title" size='small'
                        variant="outlined" helperText={error}/>
-
             <IconButton onClick={addItemHandler} color={'primary'}>
                 <AddBoxIcon/>
             </IconButton>
