@@ -3,7 +3,7 @@ import {v1} from "uuid";
 export let todolistID1 = v1()
 export let todolistID2 = v1()
 
-const initialState: any = [
+const initialState: TodoListType[] = [
     {id: todolistID1, title: 'What to learn'},
     {id: todolistID2, title: 'What to buy'},
 ]

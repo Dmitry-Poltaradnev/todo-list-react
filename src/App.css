@@ -1,32 +1,23 @@
-/*.App {*/
-/*    padding: 30px;*/
-/*    display: flex;*/
-/*}*/
+.App {
+    padding: 30px;
+    display: flex;
+}
 
-/** {*/
-/*    list-style: none;*/
-/*}*/
+.btnChangeTheme {
+    background-color: #e7fdd8;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+    border: solid 1px red;
+    padding: 10px;
+    cursor: pointer;
+}
 
-/*.App > div {*/
-/*    margin-right: 50px;*/
-/*}*/
+.whiteTheme {
+    background-color: white;
+}
 
-/*.todoList {*/
-/*    background-color: aqua;*/
-/*    padding: 20px;*/
-/*    border-radius: 5px;*/
-/*}*/
+.blackTheme {
+    background-color: yellow;
+}
 
-/*.activeFilter {*/
-/*    background-color: yellow;*/
-/*    border-radius: 3px;*/
-/*}*/
-
-/*.unActiveTask {*/
-/*    opacity: .5;*/
-/*    text-decoration: line-through;*/
-/*}*/
-/*.task-input-error{*/
-/*    border: 2px solid red;*/
-/*    outline: none;*/
-/*}*/

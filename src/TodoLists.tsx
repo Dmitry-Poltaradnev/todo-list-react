@@ -9,7 +9,9 @@ export type TodolistType = {
 }
 
 export const TodoLists = () => {
+
     const todoLists = useSelector<AppRootStateType, TodolistType[]>(state => state.todolists)
+
     return (
         <ol>
             {todoLists.map(todoList => <Todolist key={todoList.id} todoList={todoList}/>)}

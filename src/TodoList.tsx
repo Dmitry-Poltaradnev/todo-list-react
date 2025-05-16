@@ -53,6 +53,13 @@ export const Todolist = memo(({todoList}: PropsType) => {
         dispatch(updateTodoListTitleAC(todoListId, title))
     }
 
+    const task = tasks.length === 0
+        ? <p>Task list is empty</p>
+        : <ul>
+            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todoListId} task={task}/>)}
+        </ul>
+
+
     return (
         <div style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px'}}>
             <div>
@@ -64,13 +71,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
             <div>
                 <AddItemForm addItem={addTaskHandler}/>
             </div>
-            {
-                tasks.length === 0
-                    ? <p>Task list is empty</p>
-                    : <ul>
-                        {filteredTasks.map((task: any) => <Task key={task.id} todoListId={todoListId} task={task}/>)}
-                    </ul>
-            }
+            {task}
             <Box sx={filterButtonsContainerSx}>
                 <Button onClick={() => changeFilter('all')}
                         variant={filter === 'all' ? "outlined" : "contained"}>All</Button>
