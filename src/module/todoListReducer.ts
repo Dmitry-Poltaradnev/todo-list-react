@@ -1,12 +1,13 @@
 import {v1} from "uuid";
+//
+// export let todolistID1 = v1()
+// export let todolistID2 = v1()
 
-export let todolistID1 = v1()
-export let todolistID2 = v1()
-
-const initialState: TodoListType[] = [
-    {id: todolistID1, title: 'What to learn'},
-    {id: todolistID2, title: 'What to buy'},
-]
+// const initialState: TodoListType[] = [
+//     {id: todolistID1, title: 'What to learn'},
+//     {id: todolistID2, title: 'What to buy'},
+// ]
+const initialState: TodoListType[] = []
 
 type TodoListType = {
     id: string,
@@ -16,11 +17,13 @@ type TodoListType = {
 type TodoListReducerType =
     RemoveTodoListActionType
     | UpdateTodoListTitleActionType
-    | AddTodoListActionType;
+    | AddTodoListActionType
+    | SetTodoListActionType
 
 type RemoveTodoListActionType = ReturnType<typeof removeTodoListAC>
 type UpdateTodoListTitleActionType = ReturnType<typeof updateTodoListTitleAC>
 type AddTodoListActionType = ReturnType<typeof addTodoListAC>
+type SetTodoListActionType = ReturnType<typeof setTodoListsAC>
 
 export const todoListReducer = (state: TodoListType[] = initialState, action: TodoListReducerType): TodoListType[] => {
     switch (action.type) {
@@ -35,6 +38,10 @@ export const todoListReducer = (state: TodoListType[] = initialState, action: To
         case 'ADD-TODOLIST': {
             const {id, title} = action.payload
             return [...state, {id: id, title}]
+        }
+        case 'SET-TODOLIST' : {
+            const {todoLists} = action.payload
+            return [...todoLists]
         }
         default:
             return state;
@@ -52,6 +59,10 @@ export const updateTodoListTitleAC = (id: string, title: string) => {
 export const addTodoListAC = (title: string) => {
     const id = v1()
     return {type: 'ADD-TODOLIST', payload: {id, title}} as const
+}
+
+export const setTodoListsAC = (todoLists: TodoListType[]) => {
+    return {type: 'SET-TODOLIST', payload: {todoLists}} as const
 }
 
 

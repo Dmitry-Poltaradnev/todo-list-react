@@ -1,4 +1,4 @@
-import {memo, useState} from "react";
+import {memo, useEffect, useState} from "react";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 import IconButton from '@mui/material/IconButton';
@@ -12,6 +12,8 @@ import {removeTodoListAC, updateTodoListTitleAC} from "./module/todoListReducer"
 import {TodolistType} from "./TodoLists";
 import {addTaskAC, TaskType} from "./module/taskReducer";
 import {Task} from "./Task";
+import {taskApi} from "./api/task-api";
+import {todoListApi} from "./api/todolist-api";
 
 type PropsType = {
     todoList: TodolistType
@@ -21,9 +23,29 @@ export type FilterValuesType = 'all' | 'active' | 'completed'
 
 export const Todolist = memo(({todoList}: PropsType) => {
 
+
     const dispatch = useDispatch();
 
     const todoListId = todoList.id
+
+    // useEffect(() => {
+    //     taskApi.getTasks(todoListId).then(res => {
+    //         console.log(res.data.items)
+    //     })
+    // }, []);
+
+    // useEffect(() => {
+    //     const title = 'New Task'
+    //     taskApi.addTask(todoListId, title).then(res => {
+    //         console.log(res.data.items)
+    //     })
+    // }, []);
+
+    // useEffect(() => {
+    //     taskApi.removeTask(todoListId).then(res => {
+    //         console.log(res.data.items)
+    //     })
+    // }, []);
 
     const tasks: TaskType[] = useSelector<AppRootStateType, any>(state => state.tasks[todoListId])
 
@@ -53,25 +75,29 @@ export const Todolist = memo(({todoList}: PropsType) => {
         dispatch(updateTodoListTitleAC(todoListId, title))
     }
 
-    const task = tasks.length === 0
-        ? <p>Task list is empty</p>
-        : <ul>
-            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todoListId} task={task}/>)}
-        </ul>
+    // const task = tasks.length === 0
+    //     ? <p>Task list is empty</p>
+    //     : <ul>
+    //         {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todoListId} task={task}/>)}
+    //     </ul>
 
+    const removeTodoListHandler = () => {
+        dispatch(removeTodoListAC(todoListId))
+        todoListApi.removeTodoList(todoListId)
+    }
 
     return (
         <div style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px'}}>
             <div>
                 <EditableSpan oldTitle={todoList.title} changeTitleHandler={changeTodoListTitleHandler}/>
-                <IconButton onClick={() => dispatch(removeTodoListAC(todoListId))} aria-label="delete">
+                <IconButton onClick={() => removeTodoListHandler()} aria-label="delete">
                     <DeleteIcon/>
                 </IconButton>
             </div>
             <div>
                 <AddItemForm addItem={addTaskHandler}/>
             </div>
-            {task}
+            {/*{task}*/}
             <Box sx={filterButtonsContainerSx}>
                 <Button onClick={() => changeFilter('all')}
                         variant={filter === 'all' ? "outlined" : "contained"}>All</Button>
