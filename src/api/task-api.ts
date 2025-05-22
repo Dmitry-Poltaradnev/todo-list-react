@@ -1,22 +1,21 @@
 import {instance} from "./todolist-api";
 
-const todoListId = '2dd09709-1bed-4c9a-894c-eb3c9f6c7177'
-
-const taskId = '3224a0e8-efd8-49f8-a0cc-f4a3577ac4e1'
-
 export const taskApi = {
-    // getTasks(todolistId: string) {
-    //     return instance.get<GetTasksResponse>(`/todo-lists/${todoListId}/tasks`)
-    // },
-    // addTask(todolistId: string, title: string) {
-    //     return instance.post(`/todo-lists/${todoListId}/tasks`, {title})
-    // },
-    // removeTask(todolistId: string,) {
-    //     return instance.delete(`/todo-lists/${todoListId}/tasks/${taskId}`)
-    // },
-    // changeTaskTitle (todolistId: string,taskId: string, title :string) {
-    //     return instance.delete(`/todo-lists/${todoListId}/tasks/${taskId}` , {title})
-    // },
+    getTasks(todolistId: string) {
+        return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`)
+    },
+    addTask(todolistId: string, title: string) {
+        return instance.post(`/todo-lists/${todolistId}/tasks`, {title})
+    },
+    removeTask(todolistId: string, taskId: string) {
+        return instance.delete<RemoveResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`)
+    },
+    changeTaskTitle(todolistId: string, taskId: string, title: string) {
+        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {title})
+    },
+    changeTaskStatus(todolistId: string, taskId: string, status: number) {
+        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {status})
+    }
 }
 
 type GetTasksResponse = {
@@ -25,6 +24,11 @@ type GetTasksResponse = {
     error: string | null;
 }
 
+type RemoveResponseType = {
+    resultCode: number
+    messages: string[],
+    data: {}
+}
 
 type TaskType = {
     id: string

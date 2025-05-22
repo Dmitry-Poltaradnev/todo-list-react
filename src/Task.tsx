@@ -5,6 +5,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {useDispatch} from "react-redux";
 import Checkbox from "@mui/material/Checkbox";
 import {EditableSpan} from "./EditableSpan";
+import {taskApi} from "./api/task-api";
 
 type TaskProps = {
     task: TaskType
@@ -13,24 +14,32 @@ type TaskProps = {
 
 export const Task = memo(({todoListId, task}: TaskProps) => {
 
-    const dispatch = useDispatch();
+        const dispatch = useDispatch();
 
-    const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        const newStatusValue = e.currentTarget.checked
-        dispatch(changeTaskStatusAC(todoListId, task.id, newStatusValue))
-    }
-    const changeTaskTitleHandler = (newTitle: string) => {
-        dispatch(updateTaskTitleAC(todoListId, task.id, newTitle))
-    }
+        const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
+            const newStatusValue = e.currentTarget.checked
+            dispatch(changeTaskStatusAC(todoListId, task.id, newStatusValue))
+        }
+        const changeTaskTitleHandler = (newTitle: string) => {
+            taskApi.changeTaskTitle(todoListId, task.id, newTitle).then(res => {
+                dispatch(updateTaskTitleAC(todoListId, task.id, res.data.data.item.title))
+            })
+        }
 
-    return (
-        <li style={{listStyle: 'none'}}>
-            <Checkbox checked={task.isDone} onChange={changeTaskStatusHandler}/>
-            <EditableSpan oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler}/>
-            <IconButton onClick={() => dispatch(removeTaskAC(todoListId, task.id))} aria-label="delete">
-                <DeleteIcon/>
-            </IconButton>
-        </li>
-    );
-})
+        const removeTaskHandler = () => {
+            taskApi.removeTask(todoListId, task.id)
+            dispatch(removeTaskAC(todoListId, task.id))
+        }
+
+        return (
+            <li style={{listStyle: 'none'}}>
+                <Checkbox checked={task.isDone} onChange={changeTaskStatusHandler}/>
+                <EditableSpan oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler}/>
+                <IconButton onClick={() => removeTaskHandler()} aria-label="delete">
+                    <DeleteIcon/>
+                </IconButton>
+            </li>
+        );
+    }
+)
 

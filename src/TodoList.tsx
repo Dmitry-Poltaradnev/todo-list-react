@@ -10,7 +10,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./store";
 import {removeTodoListAC, updateTodoListTitleAC} from "./module/todoListReducer";
 import {TodolistType} from "./TodoLists";
-import {addTaskAC, TaskType} from "./module/taskReducer";
+import {addTaskAC, setTasksAC, TaskType} from "./module/taskReducer";
 import {Task} from "./Task";
 import {taskApi} from "./api/task-api";
 import {todoListApi} from "./api/todolist-api";
@@ -23,31 +23,19 @@ export type FilterValuesType = 'all' | 'active' | 'completed'
 
 export const Todolist = memo(({todoList}: PropsType) => {
 
-
     const dispatch = useDispatch();
 
-    const todoListId = todoList.id
+    const todolistId = todoList.id
 
-    // useEffect(() => {
-    //     taskApi.getTasks(todoListId).then(res => {
-    //         console.log(res.data.items)
-    //     })
-    // }, []);
+    useEffect(() => {
+        taskApi.getTasks(todolistId).then(res => {
+            dispatch(setTasksAC(todolistId, res.data.items))
+        })
+    }, [dispatch, todolistId]);
 
-    // useEffect(() => {
-    //     const title = 'New Task'
-    //     taskApi.addTask(todoListId, title).then(res => {
-    //         console.log(res.data.items)
-    //     })
-    // }, []);
+    const tasks: TaskType[] = useSelector<AppRootStateType, TaskType[]>(state => (state.tasks[todolistId] || []))
 
-    // useEffect(() => {
-    //     taskApi.removeTask(todoListId).then(res => {
-    //         console.log(res.data.items)
-    //     })
-    // }, []);
-
-    const tasks: TaskType[] = useSelector<AppRootStateType, any>(state => state.tasks[todoListId])
+    console.log(tasks)
 
     const [filter, setFilter] = useState<FilterValuesType>('all')
 
@@ -68,22 +56,26 @@ export const Todolist = memo(({todoList}: PropsType) => {
     }
 
     const addTaskHandler = (title: string) => {
-        dispatch(addTaskAC(todoListId, title))
+        taskApi.addTask(todolistId, title).then(res => {
+            dispatch(addTaskAC(todolistId, res.data.data.item.id, title))
+        })
+
     }
 
     const changeTodoListTitleHandler = (title: string) => {
-        dispatch(updateTodoListTitleAC(todoListId, title))
+        todoListApi.updateTodoList(todolistId, title)
+        dispatch(updateTodoListTitleAC(todolistId, title))
     }
 
-    // const task = tasks.length === 0
-    //     ? <p>Task list is empty</p>
-    //     : <ul>
-    //         {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todoListId} task={task}/>)}
-    //     </ul>
+    const task = tasks.length === 0
+        ? <p>Task list is empty</p>
+        : <ul>
+            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todolistId} task={task}/>)}
+        </ul>
 
     const removeTodoListHandler = () => {
-        dispatch(removeTodoListAC(todoListId))
-        todoListApi.removeTodoList(todoListId)
+        todoListApi.removeTodoList(todolistId)
+        dispatch(removeTodoListAC(todolistId))
     }
 
     return (
@@ -97,7 +89,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
             <div>
                 <AddItemForm addItem={addTaskHandler}/>
             </div>
-            {/*{task}*/}
+            {task}
             <Box sx={filterButtonsContainerSx}>
                 <Button onClick={() => changeFilter('all')}
                         variant={filter === 'all' ? "outlined" : "contained"}>All</Button>

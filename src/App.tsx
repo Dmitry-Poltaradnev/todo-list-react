@@ -15,33 +15,15 @@ function App() {
 
     const dispatch = useDispatch();
 
-
     useEffect(() => {
         todoListApi.getTodoLists().then((res) =>
             dispatch(setTodoListsAC(res.data)))
     }, [dispatch]);
 
-
-    // useEffect(() => {
-    //     const title = 'Redux';
-    //     todoListApi.addTodoList(title)
-    // }, []);
-
-    // useEffect(() => {
-    //     const todoId = "2dd09709-1bed-4c9a-894c-eb3c9f6c7177"
-    //     const title = 'LearnBeach1'
-    //     todoListApi.updateTodoList(todolistId, title)
-    // }, []);
-
-    // useEffect(() => {
-    //     const todoId = 'c443cd68-34d5-4328-a871-94312e6c0843'
-    //     todoListApi.removeTodoList(todoId)
-    // }, []);
-
-
     const addTodListHandler = (title: string) => {
-        dispatch(addTodoListAC(title))
-        todoListApi.addTodoList(title)
+        todoListApi.addTodoList(title).then(res => {
+            dispatch(addTodoListAC(res.data.data.item.id, title))
+        })
     }
 
     const themeValue = useSelector<AppRootStateType, ThemeType>(state => state.theme)

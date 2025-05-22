@@ -1,12 +1,8 @@
-import {v1} from "uuid";
-//
-// export let todolistID1 = v1()
-// export let todolistID2 = v1()
-
 // const initialState: TodoListType[] = [
 //     {id: todolistID1, title: 'What to learn'},
 //     {id: todolistID2, title: 'What to buy'},
 // ]
+
 const initialState: TodoListType[] = []
 
 type TodoListType = {
@@ -37,7 +33,7 @@ export const todoListReducer = (state: TodoListType[] = initialState, action: To
         }
         case 'ADD-TODOLIST': {
             const {id, title} = action.payload
-            return [...state, {id: id, title}]
+            return [{id: id, title}, ...state]
         }
         case 'SET-TODOLIST' : {
             const {todoLists} = action.payload
@@ -56,8 +52,7 @@ export const updateTodoListTitleAC = (id: string, title: string) => {
     return {type: 'UPDATE-TODOLIST-TITLE', payload: {id, title}} as const
 }
 
-export const addTodoListAC = (title: string) => {
-    const id = v1()
+export const addTodoListAC = (id: string, title: string) => {
     return {type: 'ADD-TODOLIST', payload: {id, title}} as const
 }
 
