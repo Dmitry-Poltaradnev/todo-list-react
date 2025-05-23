@@ -2,22 +2,22 @@ import './App.css';
 import {AddItemForm} from "./AddItemForm";
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {TodoLists} from "./TodoLists";
-import {addTodoListAC, setTodoListsAC} from "./module/todoListReducer";
+import {addTodoListAC, getTodosTC} from "./module/todoListReducer";
 import {Button} from "./Button";
-import {AppRootStateType} from "./store";
+import {AppRootStateType, useAppDispatch} from "./store";
 import {ThemeType, toggleThemeAC} from "./module/themeRedeucer";
 import {useEffect} from "react";
 import {todoListApi} from "./api/todolist-api";
 
 function App() {
-
-    const dispatch = useDispatch();
+    // Мы используем вместо dispatch новый кастомный useAppDispatch из store чтобы каждый раз не типизировать
+    // genericami каждый dispatch
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
-        todoListApi.getTodoLists().then((res) =>
-            dispatch(setTodoListsAC(res.data)))
+        dispatch(getTodosTC())
     }, [dispatch]);
 
     const addTodListHandler = (title: string) => {

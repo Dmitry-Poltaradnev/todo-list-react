@@ -3,6 +3,8 @@
 //     {id: todolistID2, title: 'What to buy'},
 // ]
 
+import {todoListApi} from "../api/todolist-api";
+
 const initialState: TodoListType[] = []
 
 type TodoListType = {
@@ -60,4 +62,9 @@ export const setTodoListsAC = (todoLists: TodoListType[]) => {
     return {type: 'SET-TODOLIST', payload: {todoLists}} as const
 }
 
-
+// ==================Thunks
+export const getTodosTC = () => (dispatch: any, getState: any) => {
+    todoListApi.getTodoLists().then(res => {
+        dispatch(setTodoListsAC(res.data))
+    })
+}

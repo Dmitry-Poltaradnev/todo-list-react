@@ -6,6 +6,7 @@ import {useDispatch} from "react-redux";
 import Checkbox from "@mui/material/Checkbox";
 import {EditableSpan} from "./EditableSpan";
 import {taskApi} from "./api/task-api";
+import {useAppDispatch} from "./store";
 
 type TaskProps = {
     task: TaskType
@@ -14,7 +15,7 @@ type TaskProps = {
 
 export const Task = memo(({todoListId, task}: TaskProps) => {
 
-        const dispatch = useDispatch();
+        const dispatch = useAppDispatch();
 
         const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
             const newStatusValue = e.currentTarget.checked
@@ -33,7 +34,7 @@ export const Task = memo(({todoListId, task}: TaskProps) => {
 
         return (
             <li style={{listStyle: 'none'}}>
-                <Checkbox checked={task.isDone} onChange={changeTaskStatusHandler}/>
+                {/*<Checkbox checked={task.status} onChange={changeTaskStatusHandler}/>*/}
                 <EditableSpan oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler}/>
                 <IconButton onClick={() => removeTaskHandler()} aria-label="delete">
                     <DeleteIcon/>

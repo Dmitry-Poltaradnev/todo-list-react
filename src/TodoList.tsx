@@ -7,10 +7,10 @@ import Button from '@mui/material/Button';
 import Box from "@mui/material/Box";
 import {filterButtonsContainerSx} from "./TodoList.styles";
 import {useDispatch, useSelector} from "react-redux";
-import {AppRootStateType} from "./store";
+import {AppRootStateType, useAppDispatch} from "./store";
 import {removeTodoListAC, updateTodoListTitleAC} from "./module/todoListReducer";
 import {TodolistType} from "./TodoLists";
-import {addTaskAC, setTasksAC, TaskType} from "./module/taskReducer";
+import {addTaskAC, addTaskTC, setTasksAC, setTasksTC, TaskType} from "./module/taskReducer";
 import {Task} from "./Task";
 import {taskApi} from "./api/task-api";
 import {todoListApi} from "./api/todolist-api";
@@ -23,28 +23,25 @@ export type FilterValuesType = 'all' | 'active' | 'completed'
 
 export const Todolist = memo(({todoList}: PropsType) => {
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const todolistId = todoList.id
 
     useEffect(() => {
-        taskApi.getTasks(todolistId).then(res => {
-            dispatch(setTasksAC(todolistId, res.data.items))
-        })
+       dispatch(setTasksTC(todolistId))
     }, [dispatch, todolistId]);
 
     const tasks: TaskType[] = useSelector<AppRootStateType, TaskType[]>(state => (state.tasks[todolistId] || []))
 
-    console.log(tasks)
 
     const [filter, setFilter] = useState<FilterValuesType>('all')
 
     const filterTasks = (filter: FilterValuesType, tasks: TaskType[]) => {
         if (filter === 'active') {
-            return tasks.filter(task => !task.isDone)
+            return tasks.filter(task => !task.status)
         }
         if (filter === 'completed') {
-            return tasks.filter(task => task.isDone)
+            return tasks.filter(task => task.status)
         }
         return tasks
     }
@@ -56,10 +53,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
     }
 
     const addTaskHandler = (title: string) => {
-        taskApi.addTask(todolistId, title).then(res => {
-            dispatch(addTaskAC(todolistId, res.data.data.item.id, title))
-        })
-
+        dispatch(addTaskTC(todolistId, title))
     }
 
     const changeTodoListTitleHandler = (title: string) => {
