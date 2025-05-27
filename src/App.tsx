@@ -4,12 +4,11 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import {useSelector} from "react-redux";
 import {TodoLists} from "./TodoLists";
-import {addTodoListAC, getTodosTC} from "./module/todoListReducer";
+import {addTodoListTC, getTodosTC} from "./module/todoListReducer";
 import {Button} from "./Button";
 import {AppRootStateType, useAppDispatch} from "./store";
 import {ThemeType, toggleThemeAC} from "./module/themeRedeucer";
 import {useEffect} from "react";
-import {todoListApi} from "./api/todolist-api";
 
 function App() {
     // Мы используем вместо dispatch новый кастомный useAppDispatch из store чтобы каждый раз не типизировать
@@ -21,9 +20,7 @@ function App() {
     }, [dispatch]);
 
     const addTodListHandler = (title: string) => {
-        todoListApi.addTodoList(title).then(res => {
-            dispatch(addTodoListAC(res.data.data.item.id, title))
-        })
+        dispatch(addTodoListTC(title))
     }
 
     const themeValue = useSelector<AppRootStateType, ThemeType>(state => state.theme)

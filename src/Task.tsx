@@ -1,12 +1,15 @@
 import React, {ChangeEvent, memo} from 'react';
-import {changeTaskStatusAC, removeTaskAC, TaskType, updateTaskTitleAC} from "./module/taskReducer";
+import {
+    changeTaskStatusTC,
+    changeTaskTitleTC,
+    removeTaskTC,
+    TaskType,
+} from "./module/taskReducer";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {useDispatch} from "react-redux";
-import Checkbox from "@mui/material/Checkbox";
 import {EditableSpan} from "./EditableSpan";
-import {taskApi} from "./api/task-api";
 import {useAppDispatch} from "./store";
+import {Checkbox} from "@mui/material";
 
 type TaskProps = {
     task: TaskType
@@ -17,26 +20,25 @@ export const Task = memo(({todoListId, task}: TaskProps) => {
 
         const dispatch = useAppDispatch();
 
-        const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-            const newStatusValue = e.currentTarget.checked
-            dispatch(changeTaskStatusAC(todoListId, task.id, newStatusValue))
-        }
-        const changeTaskTitleHandler = (newTitle: string) => {
-            taskApi.changeTaskTitle(todoListId, task.id, newTitle).then(res => {
-                dispatch(updateTaskTitleAC(todoListId, task.id, res.data.data.item.title))
-            })
+        const removeTaskHandler = () => {
+            dispatch(removeTaskTC(todoListId, task.id))
         }
 
-        const removeTaskHandler = () => {
-            taskApi.removeTask(todoListId, task.id)
-            dispatch(removeTaskAC(todoListId, task.id))
+        const changeTaskTitleHandler = (newTitle: string) => {
+            dispatch(changeTaskTitleTC(todoListId, task.id, newTitle))
         }
+
+        const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
+            const newStatus = e.target.checked ? 2 : 0
+            dispatch(changeTaskStatusTC(todoListId, task.id, newStatus))
+        }
+
 
         return (
             <li style={{listStyle: 'none'}}>
-                {/*<Checkbox checked={task.status} onChange={changeTaskStatusHandler}/>*/}
+                <Checkbox checked={task.status === 2} onChange={changeTaskStatusHandler}/>
                 <EditableSpan oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler}/>
-                <IconButton onClick={() => removeTaskHandler()} aria-label="delete">
+                <IconButton onClick={removeTaskHandler} aria-label="delete">
                     <DeleteIcon/>
                 </IconButton>
             </li>

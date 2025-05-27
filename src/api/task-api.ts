@@ -1,4 +1,17 @@
 import {instance} from "./todolist-api";
+import {TaskType, UpdateTaskModelType} from "../module/taskReducer";
+
+type GetTasksResponse = {
+    items: TaskType[];
+    totalCount: number;
+    error: string | null;
+}
+
+type RemoveResponseType = {
+    resultCode: number
+    messages: string[],
+    data: {}
+}
 
 export const taskApi = {
     getTasks(todolistId: string) {
@@ -13,35 +26,12 @@ export const taskApi = {
     changeTaskTitle(todolistId: string, taskId: string, title: string) {
         return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {title})
     },
-    changeTaskStatus(todolistId: string, taskId: string, status: number) {
-        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {status})
+    changeTaskStatus(todolistId: string, taskId: string, model: UpdateTaskModelType) {
+        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     }
 }
 
-type GetTasksResponse = {
-    items: TaskType[];
-    totalCount: number;
-    error: string | null;
-}
 
-type RemoveResponseType = {
-    resultCode: number
-    messages: string[],
-    data: {}
-}
-
-type TaskType = {
-    id: string
-    title: string
-    description: null
-    todoListId: string
-    order: number
-    status: number
-    priority: number
-    startDate: null
-    deadline: null
-    addedDate: string
-}
 
 
 
