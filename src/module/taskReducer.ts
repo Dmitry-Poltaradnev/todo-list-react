@@ -43,6 +43,7 @@ export type UpdateTaskModelType = {
     deadline: null | string
 }
 
+// ReturnType мы используем при работе с ф-циями и он типизирует возвращаемый результат
 type RemoveTaskTypeAC = ReturnType<typeof removeTaskAC>
 type AddTaskTypeAC = ReturnType<typeof addTaskAC>
 type ChangeTaskStatusTypeAC = ReturnType<typeof changeTaskStatusAC>
@@ -59,7 +60,6 @@ type TaskReducerType =
     | AddTodoListActionType
     | SetTasksType
     | RemoveTodoList
-
 
 export const taskReducer = (state: InitialTasksStateType = initialTasksState, action: TaskReducerType): InitialTasksStateType => {
     switch (action.type) {
@@ -145,30 +145,35 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: a
         if (res.data.resultCode === 0) dispatch(removeTaskAC(todolistId, taskId))
     })
 }
-export const changeTaskTitleTC = (todolistId: string, taskId: string, title: string) => (dispatch: any, getState: any) => {
-    taskApi.changeTaskTitle(todolistId, taskId, title).then(res => {
-        dispatch(updateTaskTitleAC(todolistId, taskId, res.data.data.item.title))
-    })
-}
-export const changeTaskStatusTC = (todolistId: string, taskId: string, status: number) => (dispatch: any, getState: any) => {
 
+export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Partial<UpdateTaskModelType>) => (dispatch: any, getState: any) => {
+    // Сделал унифицированную Thunk для обновления task т.к и при обновлении статуса и при обновлении title перезаписывется вся task на бэк
+    // поэтому с помощью Partial мы получаем из Thunk определенные поля для определённого типизированного объекта, после этого
+    // создаем новый объект task и put его на бэк
     const state = getState()
     const task: TaskType = state.tasks[todolistId].find((el: TaskType) => el.id === taskId)
 
-    if (task) {
-        const model = {
-            title: task.title,
-            description: task.description,
-            priority: task.priority,
-            startDate: task.startDate ?? null,
-            deadline: task.deadline ?? null,
-            completed: task.completed,
-            status
-        }
-        taskApi.changeTaskStatus(todolistId, taskId, model).then(res => {
-            if (res.data.resultCode === 0) {
-                dispatch(changeTaskStatusAC(todolistId, taskId, status))
-            }
-        })
+    if (!task) return
+
+    const model: UpdateTaskModelType = {
+        title: task.title,
+        description: task.description,
+        priority: task.priority,
+        startDate: task.startDate ?? null,
+        deadline: task.deadline ?? null,
+        completed: task.completed,
+        status: task.status,
+        ...domainModel
     }
+
+    taskApi.updateTaskStatus(todolistId, taskId, model).then(res => {
+        if (res.data.resultCode === 0) {
+            if (domainModel.status !== undefined) {
+                dispatch(changeTaskStatusAC(todolistId, taskId, domainModel.status))
+            }
+            if (domainModel.title !== undefined) {
+                dispatch(updateTaskTitleAC(todolistId, taskId, domainModel.title))
+            }
+        }
+    })
 }

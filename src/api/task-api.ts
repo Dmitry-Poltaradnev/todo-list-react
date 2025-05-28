@@ -23,10 +23,7 @@ export const taskApi = {
     removeTask(todolistId: string, taskId: string) {
         return instance.delete<RemoveResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`)
     },
-    changeTaskTitle(todolistId: string, taskId: string, title: string) {
-        return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, {title})
-    },
-    changeTaskStatus(todolistId: string, taskId: string, model: UpdateTaskModelType) {
+    updateTaskStatus(todolistId: string, taskId: string, model: UpdateTaskModelType) {
         return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
     }
 }

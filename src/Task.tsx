@@ -1,9 +1,8 @@
 import React, {ChangeEvent, memo} from 'react';
 import {
-    changeTaskStatusTC,
-    changeTaskTitleTC,
     removeTaskTC,
     TaskType,
+    updateTaskTC
 } from "./module/taskReducer";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -25,12 +24,12 @@ export const Task = memo(({todoListId, task}: TaskProps) => {
         }
 
         const changeTaskTitleHandler = (newTitle: string) => {
-            dispatch(changeTaskTitleTC(todoListId, task.id, newTitle))
+            dispatch(updateTaskTC(todoListId, task.id, {title: newTitle}))
         }
 
         const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
             const newStatus = e.target.checked ? 2 : 0
-            dispatch(changeTaskStatusTC(todoListId, task.id, newStatus))
+            dispatch(updateTaskTC(todoListId, task.id, {status: newStatus}))
         }
 
 
