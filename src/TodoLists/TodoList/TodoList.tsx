@@ -1,20 +1,19 @@
 import {memo, useEffect, useState} from "react";
-import {AddItemForm} from "./AddItemForm";
-import {EditableSpan} from "./EditableSpan";
+import {AddItemForm} from "../../components/AddItemForm/AddItemForm";
+import {EditableSpan} from "../../components/EditableSpan/EditableSpan";
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import Box from "@mui/material/Box";
-import {filterButtonsContainerSx} from "./TodoList.styles";
+import {filterButtonsContainerSx} from "../../TodoList.styles";
 import {useSelector} from "react-redux";
-import {AppRootStateType, useAppDispatch} from "./store";
-import {changeTodoListTC, removeTodoListTC} from "./module/todoListReducer";
-import {TodolistType} from "./TodoLists";
-import {addTaskTC, setTasksTC, TaskType} from "./module/taskReducer";
-import {Task} from "./Task";
+import {AppRootStateType, useAppDispatch} from "../../store";
+import {changeTodoListTC, removeTodoListTC, TodoListType} from "../../module/todoListReducer";
+import {addTaskTC, setTasksTC, TaskType} from "../../module/taskReducer";
+import {Task} from "./Tasks/Task";
 
 type PropsType = {
-    todoList: TodolistType
+    todoList: TodoListType
 }
 
 export type FilterValuesType = 'all' | 'active' | 'completed'

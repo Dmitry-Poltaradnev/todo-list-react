@@ -3,11 +3,11 @@ import {
     removeTaskTC,
     TaskType,
     updateTaskTC
-} from "./module/taskReducer";
+} from "../../../module/taskReducer";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {EditableSpan} from "./EditableSpan";
-import {useAppDispatch} from "./store";
+import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";
+import {useAppDispatch} from "../../../store";
 import {Checkbox} from "@mui/material";
 
 type TaskProps = {

@@ -1,5 +1,6 @@
 import {addTodoListAC, removeTodoListAC} from "./todoListReducer";
 import {taskApi} from "../api/task-api";
+import {changeStatusAppAC, ResultCode, setAppErrorAC} from "./appRedeucer";
 
 const initialTasksState = {}
 
@@ -60,6 +61,7 @@ type TaskReducerType =
     | AddTodoListActionType
     | SetTasksType
     | RemoveTodoList
+
 
 export const taskReducer = (state: InitialTasksStateType = initialTasksState, action: TaskReducerType): InitialTasksStateType => {
     switch (action.type) {
@@ -134,15 +136,22 @@ export const setTasksTC = (todolistId: string) => (dispatch: any, getState: any)
     })
 }
 
-export const addTaskTC = (todolistId: string, title: string) => (dispatch: any, getState: any) => {
-    taskApi.addTask(todolistId, title).then(res => {
-        dispatch(addTaskAC(res.data.data.item))
+export const addTaskTC = (todoListId: string, title: string) => (dispatch: any, getState: any) => {
+    dispatch(changeStatusAppAC('loading'))
+    taskApi.addTask(todoListId, title).then(res => {
+        if (res.data.resultCode === ResultCode.Error) {
+            dispatch(setAppErrorAC(res.data.messages))
+            dispatch(changeStatusAppAC('loading'))
+        } else {
+            dispatch(addTaskAC(res.data.data.item))
+            dispatch(changeStatusAppAC('succeeded'))
+        }
     })
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: any, getState: any) => {
     taskApi.removeTask(todolistId, taskId).then(res => {
-        if (res.data.resultCode === 0) dispatch(removeTaskAC(todolistId, taskId))
+        if (res.data.resultCode === ResultCode.Success) dispatch(removeTaskAC(todolistId, taskId))
     })
 }
 
@@ -167,7 +176,7 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Pa
     }
 
     taskApi.updateTaskStatus(todolistId, taskId, model).then(res => {
-        if (res.data.resultCode === 0) {
+        if (res.data.resultCode === ResultCode.Success) {
             if (domainModel.status !== undefined) {
                 dispatch(changeTaskStatusAC(todolistId, taskId, domainModel.status))
             }

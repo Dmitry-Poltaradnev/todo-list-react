@@ -66,9 +66,7 @@ export const SkeletonTodoList = () => {
                     baseColor="#e0e0e0"
                     highlightColor="#f5f5f5"
                 />
-
             </div>
-
         </div>
     );
 };
