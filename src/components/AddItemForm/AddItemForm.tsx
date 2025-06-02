@@ -5,11 +5,13 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 
 type AddItemFormPropsType = {
     addItem: (title: string) => void
+    entityTodoList?: string
 }
 
-export const AddItemForm = ({addItem}: AddItemFormPropsType) => {
+export const AddItemForm = ({entityTodoList, addItem}: AddItemFormPropsType) => {
     const [taskTitle, setTaskTitle] = useState('')
     const [error, setError] = useState<string | null>(null)
+
 
     const addItemHandler = () => {
         if (taskTitle.trim() !== '') {
@@ -36,7 +38,7 @@ export const AddItemForm = ({addItem}: AddItemFormPropsType) => {
             <TextField error={!!error} value={taskTitle} onKeyUp={addTaskOnKeyUpHandler}
                        onChange={changeItemTitleHandler} id="outlined-basic" label="Enter a title" size='small'
                        variant="outlined" helperText={error}/>
-            <IconButton onClick={addItemHandler} color={'primary'}>
+            <IconButton disabled={entityTodoList === 'loading'} onClick={addItemHandler} color={'primary'}>
                 <AddBoxIcon/>
             </IconButton>
         </div>

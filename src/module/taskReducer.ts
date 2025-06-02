@@ -1,4 +1,4 @@
-import {addTodoListAC, removeTodoListAC} from "./todoListReducer";
+import {addTodoListAC, changeTodoListEntityStatusAC, removeTodoListAC} from "./todoListReducer";
 import {taskApi} from "../api/task-api";
 import {changeStatusAppAC, ResultCode, setAppErrorAC} from "./appRedeucer";
 
@@ -150,8 +150,12 @@ export const addTaskTC = (todoListId: string, title: string) => (dispatch: any, 
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: any, getState: any) => {
+    dispatch(changeTodoListEntityStatusAC(todolistId, 'loading'))
     taskApi.removeTask(todolistId, taskId).then(res => {
-        if (res.data.resultCode === ResultCode.Success) dispatch(removeTaskAC(todolistId, taskId))
+        if (res.data.resultCode === ResultCode.Success) {
+            dispatch(removeTaskAC(todolistId, taskId))
+            dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
+        }
     })
 }
 
@@ -174,7 +178,7 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Pa
         status: task.status,
         ...domainModel
     }
-
+    dispatch(changeTodoListEntityStatusAC(todolistId, 'loading'))
     taskApi.updateTaskStatus(todolistId, taskId, model).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
             if (domainModel.status !== undefined) {
@@ -184,5 +188,6 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Pa
                 dispatch(updateTaskTitleAC(todolistId, taskId, domainModel.title))
             }
         }
+        dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
     })
 }

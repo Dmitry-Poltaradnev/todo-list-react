@@ -8,35 +8,38 @@ import Box from "@mui/material/Box";
 import {filterButtonsContainerSx} from "../../TodoList.styles";
 import {useSelector} from "react-redux";
 import {AppRootStateType, useAppDispatch} from "../../store";
-import {changeTodoListTC, removeTodoListTC, TodoListType} from "../../module/todoListReducer";
+import {changeTodoListTC, removeTodoListTC, TodoListDomainType} from "../../module/todoListReducer";
 import {addTaskTC, setTasksTC, TaskType} from "../../module/taskReducer";
 import {Task} from "./Tasks/Task";
 
 type PropsType = {
-    todoList: TodoListType
+    todoList: TodoListDomainType
 }
 
-export type FilterValuesType = 'all' | 'active' | 'completed'
+enum FilterValues {
+    All = 'all',
+    Active = 'active',
+    Completed = 'completed'
+}
 
 export const Todolist = memo(({todoList}: PropsType) => {
 
     const dispatch = useAppDispatch();
 
     const todolistId = todoList.id
-
     useEffect(() => {
         dispatch(setTasksTC(todolistId))
     }, [dispatch, todolistId]);
 
     const tasks: TaskType[] = useSelector<AppRootStateType, TaskType[]>(state => (state.tasks[todolistId] || []))
 
-    const [filter, setFilter] = useState<FilterValuesType>('all')
+    const [filter, setFilter] = useState<FilterValues>(FilterValues.All)
 
-    const filterTasks = (filter: FilterValuesType, tasks: TaskType[]) => {
-        if (filter === 'active') {
+    const filterTasks = (filter: FilterValues, tasks: TaskType[]) => {
+        if (filter === FilterValues.Active) {
             return tasks.filter(task => !task.status)
         }
-        if (filter === 'completed') {
+        if (filter === FilterValues.Completed) {
             return tasks.filter(task => task.status)
         }
         return tasks
@@ -44,7 +47,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
 
     const filteredTasks = filterTasks(filter, tasks)
 
-    const changeFilter = (filter: FilterValuesType) => {
+    const changeFilter = (filter: FilterValues) => {
         setFilter(filter)
     }
 
@@ -59,7 +62,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
     const task = tasks.length === 0
         ? <p>Task list is empty</p>
         : <ul>
-            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todolistId} task={task}/>)}
+            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todolistId} task={task} entityStatus={todoList.entityStatus}/>)}
         </ul>
 
     const removeTodoListHandler = () => {
@@ -67,25 +70,26 @@ export const Todolist = memo(({todoList}: PropsType) => {
     }
 
     return (
-        <div style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px'}}>
+        <li style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px', listStyle: 'none'}}>
             <div>
                 <EditableSpan oldTitle={todoList.title} changeTitleHandler={changeTodoListTitleHandler}/>
-                <IconButton onClick={removeTodoListHandler} aria-label="delete">
+                <IconButton  disabled={todoList.entityStatus === 'loading'} onClick={removeTodoListHandler}
+                            aria-label="delete">
                     <DeleteIcon/>
                 </IconButton>
             </div>
             <div>
-                <AddItemForm addItem={addTaskHandler}/>
+                <AddItemForm entityTodoList={todoList.entityStatus} addItem={addTaskHandler}/>
             </div>
             {task}
             <Box sx={filterButtonsContainerSx}>
-                <Button onClick={() => changeFilter('all')}
-                        variant={filter === 'all' ? "outlined" : "contained"}>All</Button>
-                <Button onClick={() => changeFilter('active')}
-                        variant={filter === 'active' ? "outlined" : "contained"}>Active</Button>
-                <Button onClick={() => changeFilter('completed')}
-                        variant={filter === 'completed' ? "outlined" : "contained"}>Completed</Button>
+                <Button onClick={() => changeFilter(FilterValues.All)}
+                        variant={filter === FilterValues.All ? "outlined" : "contained"}>All</Button>
+                <Button onClick={() => changeFilter(FilterValues.Active)}
+                        variant={filter === FilterValues.Active ? "outlined" : "contained"}>Active</Button>
+                <Button onClick={() => changeFilter(FilterValues.Completed)}
+                        variant={filter === FilterValues.Completed ? "outlined" : "contained"}>Completed</Button>
             </Box>
-        </div>
+        </li>
     )
 })

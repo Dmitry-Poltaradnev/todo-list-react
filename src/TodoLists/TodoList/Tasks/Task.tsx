@@ -9,13 +9,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";
 import {useAppDispatch} from "../../../store";
 import {Checkbox} from "@mui/material";
+import {RequestStatusType} from "../../../module/appRedeucer";
 
 type TaskProps = {
     task: TaskType
     todoListId: string
+    entityStatus: RequestStatusType
 }
 
-export const Task = memo(({todoListId, task}: TaskProps) => {
+export const Task = memo(({todoListId, task, entityStatus}: TaskProps) => {
 
         const dispatch = useAppDispatch();
 
@@ -32,12 +34,12 @@ export const Task = memo(({todoListId, task}: TaskProps) => {
             dispatch(updateTaskTC(todoListId, task.id, {status: newStatus}))
         }
 
-
         return (
             <li style={{listStyle: 'none'}}>
-                <Checkbox checked={task.status === 2} onChange={changeTaskStatusHandler}/>
+                <Checkbox disabled={entityStatus === 'loading'} checked={task.status === 2}
+                          onChange={changeTaskStatusHandler}/>
                 <EditableSpan oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler}/>
-                <IconButton onClick={removeTaskHandler} aria-label="delete">
+                <IconButton disabled={entityStatus === 'loading'} onClick={removeTaskHandler} aria-label="delete">
                     <DeleteIcon/>
                 </IconButton>
             </li>

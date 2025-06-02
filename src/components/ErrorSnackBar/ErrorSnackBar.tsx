@@ -9,7 +9,6 @@ export const ErrorSnackBar = () => {
 
     const error = useSelector<AppRootStateType, string | null>(state => state.app.error);
 
-
     // const [open, setOpen] = useState(true);
     const dispatch = useAppDispatch();
 

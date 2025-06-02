@@ -44,28 +44,17 @@ export const SkeletonTodoList = () => {
                     />
                 </div>
             ))}
-            <div style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
-                <Skeleton
-                    height={30}
-                    width={100}
-                    style={{marginTop: 10}}
-                    baseColor="#e0e0e0"
-                    highlightColor="#f5f5f5"
-                />
-                <Skeleton
-                    height={30}
-                    width={100}
-                    style={{marginTop: 10}}
-                    baseColor="#e0e0e0"
-                    highlightColor="#f5f5f5"
-                />
-                <Skeleton
-                    height={30}
-                    width={100}
-                    style={{marginTop: 10}}
-                    baseColor="#e0e0e0"
-                    highlightColor="#f5f5f5"
-                />
+            <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
+                {[...Array(3)].map((_, index) => (
+                    <div key={index}>
+                        <Skeleton
+                            height={30}
+                            width={100}
+                            baseColor="#e0e0e0"
+                            highlightColor="#f5f5f5"
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );
