@@ -7,12 +7,6 @@ type GetTasksResponse = {
     error: string | null;
 }
 
-type RemoveResponseType = {
-    resultCode: number
-    messages: string[],
-    data: {}
-}
-
 export const taskApi = {
     getTasks(todolistId: string) {
         return instance.get<GetTasksResponse>(`/todo-lists/${todolistId}/tasks`)
@@ -21,7 +15,7 @@ export const taskApi = {
         return instance.post(`/todo-lists/${todolistId}/tasks`, {title})
     },
     removeTask(todolistId: string, taskId: string) {
-        return instance.delete<RemoveResponseType>(`/todo-lists/${todolistId}/tasks/${taskId}`)
+        return instance.delete(`/todo-lists/${todolistId}/tasks/${taskId}`)
     },
     updateTaskStatus(todolistId: string, taskId: string, model: UpdateTaskModelType) {
         return instance.put(`/todo-lists/${todolistId}/tasks/${taskId}`, model)

@@ -1,5 +1,19 @@
 import axios from "axios";
 
+type TodoListType = {
+    id: string
+    addedDate: string
+    order: number
+    title: string
+}
+
+export type ResponseType<T = {}> = {
+    resultCode: number
+    messages: string[]
+    data: T
+    fieldsErrors: string[]
+}
+
 export const instance = axios.create({
     baseURL: 'https://social-network.samuraijs.com/api/1.1',
     withCredentials: true,
@@ -23,18 +37,6 @@ export const todoListApi = {
     }
 }
 
-type TodoListType = {
-    id: string
-    addedDate: string
-    order: number
-    title: string
-}
 
-export type ResponseType<T = {}> = {
-    resultCode: number
-    messages: string[]
-    data: T
-    fieldsErrors: string[]
-}
 
 

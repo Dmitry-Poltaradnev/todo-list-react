@@ -1,5 +1,6 @@
 import {todoListApi} from "../api/todolist-api";
 import {changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC} from "./appRedeucer";
+import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
 
 const initialState: TodoListDomainType[] = []
 
@@ -74,6 +75,8 @@ export const getTodosTC = () => (dispatch: any, getState: any) => {
         const domainTodoLists: TodoListDomainType[] = res.data.map(todoList => ({...todoList, entityStatus: 'idle'}))
         dispatch(setTodoListsAC(domainTodoLists))
         dispatch(changeStatusAppAC('succeeded'))
+    }).catch(err => {
+        console.log(err.message)
     })
 }
 export const addTodoListTC = (title: string) => (dispatch: any, getState: any) => {
@@ -82,25 +85,32 @@ export const addTodoListTC = (title: string) => (dispatch: any, getState: any) =
             dispatch(addTodoListAC(res.data.data.item.id, title))
             dispatch(changeStatusAppAC('succeeded'))
         } else {
-            dispatch(setAppErrorAC((res.data.messages[0] || 'Unknown error occurred')))
-            dispatch(changeStatusAppAC('loading'))
+            handleServerAppError(dispatch, res.data)
         }
     }).catch(err => {
-        console.log(`при добавлении ${err.message}`)
-        dispatch(setAppErrorAC('Error while adding todoList'))
+        handleServerNetworkError(dispatch, err)
     })
 }
 export const removeTodoListTC = (todolistId: string) => (dispatch: any, getState: any) => {
     dispatch(changeTodoListEntityStatusAC(todolistId, 'loading'))
     todoListApi.removeTodoList(todolistId).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
-            dispatch(changeTodoListEntityStatusAC(todolistId, 'succeeded'))
             dispatch(removeTodoListAC(todolistId))
+            dispatch(changeTodoListEntityStatusAC(todolistId, 'succeeded'))
         }
+    }).catch(err => {
+        handleAppError(dispatch, todolistId, err)
     })
 }
 export const changeTodoListTC = (todolistId: string, title: string) => (dispatch: any, getState: any) => {
     todoListApi.updateTodoList(todolistId, title).then(res => {
-        if (res.data.resultCode === ResultCode.Success) dispatch(updateTodoListTitleAC(todolistId, title))
+        if (res.data.resultCode === ResultCode.Success) {
+            dispatch(updateTodoListTitleAC(todolistId, title))
+        } else {
+            dispatch(setAppErrorAC(res.data.messages[0] || 'Unknown error occurred'))
+        }
+    }).catch(err => {
+        dispatch(setAppErrorAC(err.message))
     })
 }
+

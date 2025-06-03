@@ -1,6 +1,7 @@
 import {addTodoListAC, changeTodoListEntityStatusAC, removeTodoListAC} from "./todoListReducer";
 import {taskApi} from "../api/task-api";
 import {changeStatusAppAC, ResultCode, setAppErrorAC} from "./appRedeucer";
+import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
 
 const initialTasksState = {}
 
@@ -133,19 +134,22 @@ export const updateTaskTitleAC = (todolistId: string, taskId: string, title: str
 export const setTasksTC = (todolistId: string) => (dispatch: any, getState: any) => {
     taskApi.getTasks(todolistId).then(res => {
         dispatch(setTasksAC(todolistId, res.data.items))
+    }).catch(err => {
+        console.log(err.message)
     })
 }
 
 export const addTaskTC = (todoListId: string, title: string) => (dispatch: any, getState: any) => {
     dispatch(changeStatusAppAC('loading'))
     taskApi.addTask(todoListId, title).then(res => {
-        if (res.data.resultCode === ResultCode.Error) {
-            dispatch(setAppErrorAC(res.data.messages))
-            dispatch(changeStatusAppAC('loading'))
-        } else {
+        if (res.data.resultCode === ResultCode.Success) {
             dispatch(addTaskAC(res.data.data.item))
             dispatch(changeStatusAppAC('succeeded'))
+        } else {
+            handleServerAppError(dispatch, res.data)
         }
+    }).catch(err => {
+        handleServerNetworkError(dispatch, err)
     })
 }
 
@@ -156,6 +160,8 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: a
             dispatch(removeTaskAC(todolistId, taskId))
             dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
         }
+    }).catch(err => {
+        handleAppError(dispatch, todolistId, err)
     })
 }
 
@@ -188,6 +194,9 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Pa
                 dispatch(updateTaskTitleAC(todolistId, taskId, domainModel.title))
             }
         }
+        dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
+    }).catch(err => {
+        dispatch(setAppErrorAC(err.message))
         dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
     })
 }
