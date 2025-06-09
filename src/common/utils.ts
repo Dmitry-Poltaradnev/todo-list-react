@@ -15,3 +15,5 @@ export const handleAppError = (dispatch: Dispatch, todolistId: string, err: { me
     dispatch(setAppErrorAC(err.message))
     dispatch(changeTodoListEntityStatusAC(todolistId, 'failed'))
 }
+
+

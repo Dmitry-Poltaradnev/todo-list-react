@@ -72,7 +72,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
     return (
         <li style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px', listStyle: 'none'}}>
             <div>
-                <EditableSpan oldTitle={todoList.title} changeTitleHandler={changeTodoListTitleHandler}/>
+                <EditableSpan entityStatus={todoList.entityStatus} oldTitle={todoList.title} changeTitleHandler={changeTodoListTitleHandler}/>
                 <IconButton  disabled={todoList.entityStatus === 'loading'} onClick={removeTodoListHandler}
                             aria-label="delete">
                     <DeleteIcon/>

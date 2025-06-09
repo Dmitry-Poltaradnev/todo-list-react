@@ -159,6 +159,8 @@ export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: a
         if (res.data.resultCode === ResultCode.Success) {
             dispatch(removeTaskAC(todolistId, taskId))
             dispatch(changeTodoListEntityStatusAC(todolistId, 'idle'))
+        } else {
+            handleServerAppError(dispatch, res.data)
         }
     }).catch(err => {
         handleAppError(dispatch, todolistId, err)
