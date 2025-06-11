@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import {getTodosTC} from "./module/todoListReducer";
 import {Button} from "./components/Button/Button";
 import {AppRootStateType, useAppDispatch} from "./store";
-import {ThemeType, toggleThemeAC} from "./module/appRedeucer";
+import {ThemeType, toggleThemeAC} from "./module/appReducer";
 import React, {useEffect} from "react";
 import {ErrorSnackBar} from "./components/ErrorSnackBar/ErrorSnackBar";
 import {Routing} from "./common/routing/Routing";

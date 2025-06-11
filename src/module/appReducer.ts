@@ -20,7 +20,7 @@ const initAppState = {
 type InitAppStateType = typeof initAppState
 
 type ToggleThemeType = ReturnType<typeof toggleThemeAC>
-type ChangeStatusType = ReturnType<typeof changeStatusAppAC>
+export type ChangeStatusType = ReturnType<typeof changeStatusAppAC>
 export type SetAppErrorType = ReturnType<typeof setAppErrorAC>
 
 type AppReducerType = ToggleThemeType | ChangeStatusType | SetAppErrorType

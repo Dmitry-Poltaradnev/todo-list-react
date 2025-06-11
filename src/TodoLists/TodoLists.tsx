@@ -3,7 +3,7 @@ import {Todolist} from "./TodoList/TodoList";
 import {useSelector} from "react-redux";
 import {AppRootStateType, useAppDispatch} from "../store";
 import {addTodoListTC, TodoListDomainType, TodoListType} from "../module/todoListReducer";
-import {RequestStatusType} from "../module/appRedeucer";
+import {RequestStatusType} from "../module/appReducer";
 import {SkeletonTodoList} from "../components/SkeletonTodoList/SkeletonTodoList";
 import Grid from "@mui/material/Grid";
 import {AddItemForm} from "../components/AddItemForm/AddItemForm";

@@ -9,7 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";
 import {useAppDispatch} from "../../../store";
 import {Checkbox} from "@mui/material";
-import {RequestStatusType} from "../../../module/appRedeucer";
+import {RequestStatusType} from "../../../module/appReducer";
 
 type TaskProps = {
     task: TaskType

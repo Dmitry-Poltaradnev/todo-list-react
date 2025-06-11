@@ -8,8 +8,10 @@ import FormLabel from '@mui/material/FormLabel'
 import TextField from '@mui/material/TextField'
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import styles from './Login.module.css'
+import {loginTC} from "../module/authReducer";
+import {useAppDispatch} from "../store";
 
-type Inputs = {
+export type LoginFormType = {
     email: string
     password: string
     rememberMe: boolean
@@ -17,21 +19,21 @@ type Inputs = {
 
 export const Login = () => {
     // const themeMode = useAppSelector(selectThemeMode)
-
     // const theme = getTheme(themeMode)
-
     const {
         register,
         handleSubmit,
         reset,
         control,
         formState: {errors},
-    } = useForm<Inputs>({defaultValues: {email: '', password: '', rememberMe: false}})
+    } = useForm<LoginFormType>({defaultValues: {email: '', password: '', rememberMe: false}})
 
 
-    const onSubmit: SubmitHandler<Inputs> = data => {
-        console.log(data)
-        reset()
+    const dispatch = useAppDispatch()
+
+    const onSubmit: SubmitHandler<LoginFormType> = (data: any) => {
+        dispatch(loginTC(data))
+        // reset()
     }
 
     return (
@@ -69,7 +71,22 @@ export const Login = () => {
                                            },
                                        })} label="Email" margin="normal"/>
                             {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
-                            <TextField type="password" label="Password" margin="normal"/>
+                            <TextField
+                                type="password"
+                                label="Password"
+                                margin="normal"
+                                {...register('password',
+                                    {
+                                        required: 'Password is required',
+                                        minLength: {
+                                            value: 6,
+                                            message: "Password cannot be less than 6 symbols",
+                                        }
+                                    })}
+                            />
+                            {errors.password && (
+                                <span className={styles.errorMessage}>{errors.password.message}</span>
+                            )}
 
                             <FormControlLabel
                                 label={'Remember me'}
