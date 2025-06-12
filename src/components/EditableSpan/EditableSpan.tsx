@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useState} from 'react';
 import TextField from '@mui/material/TextField';
-import {RequestStatusType} from "../../module/appReducer";
+import {RequestStatusType} from "../../module/app-slice";
 
 type EditableSpanPropsType = {
     changeTitleHandler: (newTitle: string) => void

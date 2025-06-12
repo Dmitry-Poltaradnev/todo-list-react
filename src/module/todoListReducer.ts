@@ -1,5 +1,5 @@
 import {todoListApi} from "../api/todolist-api";
-import {changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC} from "./appReducer";
+import {changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC} from "./app-slice";
 import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
 
 const initialState: TodoListDomainType[] = []

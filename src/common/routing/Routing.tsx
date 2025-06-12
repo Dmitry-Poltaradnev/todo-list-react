@@ -4,7 +4,7 @@ import {TodoLists} from "../../TodoLists/TodoLists";
 import {PageNotFound} from "../../components/PageNotFound/PageNotFound";
 
 export const Path = {
-    TodoLists: 'todo-list-react/',
+    TodoLists: '/todo-list-react',
     Login: '/login',
     NotFound: '*',
 } as const

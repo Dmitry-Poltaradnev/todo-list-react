@@ -3,7 +3,7 @@ import Snackbar, {SnackbarCloseReason} from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import {useSelector} from "react-redux";
 import {AppRootStateType, useAppDispatch} from "../../store";
-import {changeStatusAppAC, setAppErrorAC} from "../../module/appReducer";
+import {changeStatusAppAC, setAppErrorAC} from "../../module/app-slice";
 
 export const ErrorSnackBar = () => {
 

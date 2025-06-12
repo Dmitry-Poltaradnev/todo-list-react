@@ -8,8 +8,9 @@ import FormLabel from '@mui/material/FormLabel'
 import TextField from '@mui/material/TextField'
 import {Controller, SubmitHandler, useForm} from "react-hook-form";
 import styles from './Login.module.css'
-import {loginTC} from "../module/authReducer";
+import {loginTC} from "../module/auth-slice";
 import {useAppDispatch} from "../store";
+import {useNavigate} from "react-router-dom";
 
 export type LoginFormType = {
     email: string
@@ -31,8 +32,12 @@ export const Login = () => {
 
     const dispatch = useAppDispatch()
 
+    // =====
+    const navigate = useNavigate();
+// =====
+
     const onSubmit: SubmitHandler<LoginFormType> = (data: any) => {
-        dispatch(loginTC(data))
+        dispatch(loginTC(data, navigate))
         // reset()
     }
 
@@ -55,10 +60,10 @@ export const Login = () => {
                             </p>
                             <p>or use common test account credentials:</p>
                             <p>
-                                <b>Email:</b> free@samuraijs.com
+                                <b>Email:</b> poltaradnev@gmail.com
                             </p>
                             <p>
-                                <b>Password:</b> free
+                                <b>Password:</b> xueta_vash_google
                             </p>
                         </FormLabel>
                         <FormGroup>
@@ -87,7 +92,6 @@ export const Login = () => {
                             {errors.password && (
                                 <span className={styles.errorMessage}>{errors.password.message}</span>
                             )}
-
                             <FormControlLabel
                                 label={'Remember me'}
                                 control={
