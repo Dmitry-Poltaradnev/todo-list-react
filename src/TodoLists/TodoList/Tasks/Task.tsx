@@ -3,7 +3,7 @@ import {
     removeTaskTC,
     TaskType,
     updateTaskTC
-} from "../../../module/taskReducer";
+} from "../../../module/task-slice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";

@@ -8,8 +8,8 @@ import Box from "@mui/material/Box";
 import {filterButtonsContainerSx} from "../../TodoList.styles";
 import {useSelector} from "react-redux";
 import {AppRootStateType, useAppDispatch} from "../../store";
-import {changeTodoListTC, removeTodoListTC, TodoListDomainType} from "../../module/todoListReducer";
-import {addTaskTC, setTasksTC, TaskType} from "../../module/taskReducer";
+import {changeTodoListTC, removeTodoListTC, TodoListDomainType} from "../../module/todoList-slice";
+import {addTaskTC, setTasksTC, TaskType} from "../../module/task-slice";
 import {Task} from "./Tasks/Task";
 
 type PropsType = {

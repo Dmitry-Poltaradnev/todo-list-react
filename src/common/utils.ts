@@ -1,7 +1,7 @@
 import {Dispatch} from "redux";
 import {changeStatusAppAC, setAppErrorAC} from "../module/app-slice";
 import {ResponseType} from '../api/todolist-api'
-import {changeTodoListEntityStatusAC} from "../module/todoListReducer";
+import {changeTodoListEntityStatusAC} from "../module/todoList-slice";
 
 export const handleServerNetworkError = (dispatch: Dispatch, err: { message: string }) => {
     dispatch(setAppErrorAC(err.message))
@@ -13,7 +13,7 @@ export const handleServerAppError = <T>(dispatch: Dispatch, data: ResponseType<T
 }
 export const handleAppError = (dispatch: Dispatch, todolistId: string, err: { message: string }) => {
     dispatch(setAppErrorAC(err.message))
-    dispatch(changeTodoListEntityStatusAC(todolistId, 'failed'))
+    dispatch(changeTodoListEntityStatusAC({id: todolistId, entityStatus: 'failed'}))
 }
 
 

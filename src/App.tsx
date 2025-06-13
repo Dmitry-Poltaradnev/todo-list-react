@@ -2,7 +2,7 @@ import './App.css';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import {useSelector} from "react-redux";
-import {getTodosTC} from "./module/todoListReducer";
+import {getTodosTC} from "./module/todoList-slice";
 import {Button} from "./components/Button/Button";
 import {AppRootStateType, useAppDispatch} from "./store";
 import {ThemeType, toggleThemeAC} from "./module/app-slice";
