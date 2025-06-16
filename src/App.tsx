@@ -1,14 +1,15 @@
 import './App.css';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import {useSelector} from "react-redux";
-import {getTodosTC} from "./module/todoList-slice";
+import {getTodosTC} from "./model/todoList-slice";
 import {Button} from "./components/Button/Button";
-import {AppRootStateType, useAppDispatch} from "./store";
-import {ThemeType, toggleThemeAC} from "./module/app-slice";
+import {ThemeType, themeValueSelect, toggleThemeAC} from "./model/app-slice";
 import React, {useEffect} from "react";
 import {ErrorSnackBar} from "./components/ErrorSnackBar/ErrorSnackBar";
 import {Routing} from "./common/routing/Routing";
+import {useAppDispatch} from "./hooks/useAppDispatch";
+import {useAppSelector} from "./hooks/useAppSelector";
+
 
 function App() {
     // Мы используем вместо dispatch новый кастомный useAppDispatch из store чтобы каждый раз не типизировать
@@ -19,7 +20,7 @@ function App() {
         dispatch(getTodosTC())
     }, [dispatch]);
 
-    const themeValue = useSelector<AppRootStateType, ThemeType>(state => state.app.theme)
+    const themeValue = useAppSelector(themeValueSelect)
 
     return <div className="App">
         <div className={themeValue === ThemeType.White ? 'whiteTheme' : 'blackTheme'}>

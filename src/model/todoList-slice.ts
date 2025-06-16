@@ -3,13 +3,6 @@ import {changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC} from ".
 import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const initialState: TodoListDomainType[] = []
-
-export type TodoListType = {
-    id: string,
-    title: string,
-}
-
 // type TodoListReducerType =
 //     RemoveTodoListActionType
 //     | UpdateTodoListTitleActionType
@@ -23,9 +16,6 @@ export type TodoListType = {
 // type SetTodoListActionType = ReturnType<typeof setTodoListsAC>
 // type changeTodoListEntityStatusType = ReturnType<typeof changeTodoListEntityStatusAC>
 //
-export type TodoListDomainType = TodoListType & {
-    entityStatus: RequestStatusType
-}
 //
 // export const todoListSlice = (state: TodoListDomainType[] = initialState, action: TodoListReducerType): TodoListDomainType[] => {
 //     switch (action.type) {
@@ -69,7 +59,18 @@ export type TodoListDomainType = TodoListType & {
 // export const changeTodoListEntityStatusAC = (id: string, entityStatus: RequestStatusType) => {
 //     return {type: 'CHANGE-TODOLIST-ENTITY-STATUS', payload: {id, entityStatus}} as const;
 // }
-//=====
+
+const initialState: TodoListDomainType[] = []
+
+export type TodoListType = {
+    id: string,
+    title: string,
+}
+
+export type TodoListDomainType = TodoListType & {
+    entityStatus: RequestStatusType
+}
+
 export const todoListSlice = createSlice({
     name: "todolists",
     initialState,

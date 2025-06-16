@@ -1,5 +1,5 @@
 import {instance} from "./todolist-api";
-import {TaskType, UpdateTaskModelType} from "../module/task-slice";
+import {TaskType, UpdateTaskModelType} from "../model/task-slice";
 
 type GetTasksResponse = {
     items: TaskType[];

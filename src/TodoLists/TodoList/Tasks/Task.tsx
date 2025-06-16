@@ -3,13 +3,13 @@ import {
     removeTaskTC,
     TaskType,
     updateTaskTC
-} from "../../../module/task-slice";
+} from "../../../model/task-slice";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {EditableSpan} from "../../../components/EditableSpan/EditableSpan";
-import {useAppDispatch} from "../../../store";
 import {Checkbox} from "@mui/material";
-import {RequestStatusType} from "../../../module/app-slice";
+import {RequestStatusType} from "../../../model/app-slice";
+import {useAppDispatch} from "../../../hooks/useAppDispatch";
 
 type TaskProps = {
     task: TaskType

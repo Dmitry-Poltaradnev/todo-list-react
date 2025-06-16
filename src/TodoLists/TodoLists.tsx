@@ -1,24 +1,23 @@
 import React from 'react';
 import {Todolist} from "./TodoList/TodoList";
-import {useSelector} from "react-redux";
-import {AppRootStateType, useAppDispatch} from "../store";
-import {addTodoListTC, TodoListDomainType, TodoListType} from "../module/todoList-slice";
+import {addTodoListTC} from "../model/todoList-slice";
 import {SkeletonTodoList} from "../components/SkeletonTodoList/SkeletonTodoList";
 import Grid from "@mui/material/Grid";
 import {AddItemForm} from "../components/AddItemForm/AddItemForm";
-import {RequestStatusType} from "../module/app-slice";
+import {selectAppStatus} from "../model/app-slice";
+import {useAppSelector} from "../hooks/useAppSelector";
+import {useAppDispatch} from "../hooks/useAppDispatch";
+import {selectTodoLists} from "../model/todolists-selectors";
 
 export const TodoLists = () => {
 
     const dispatch = useAppDispatch();
 
-    const todoLists = useSelector<AppRootStateType, TodoListDomainType[]>(state => state.todolists)
+    const todoLists = useAppSelector(selectTodoLists)
 
-    const appStatus = useSelector<AppRootStateType, RequestStatusType>(state => state.app.appStatus)
+    const appStatus = useAppSelector(selectAppStatus)
 
-    const todoListsCount = useSelector<AppRootStateType, TodoListType[]>(state => state.todolists)
-
-    const skeletonCount = todoListsCount.length > 0 ? todoListsCount.length : 3
+    const skeletonCount = todoLists.length > 0 ? todoLists.length : 3
 
     const addTodListHandler = (title: string) => {
         dispatch(addTodoListTC(title))

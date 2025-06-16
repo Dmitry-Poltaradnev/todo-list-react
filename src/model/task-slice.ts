@@ -4,8 +4,6 @@ import {changeStatusAppAC, ResultCode, setAppErrorAC} from "./app-slice";
 import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-const initialState: InitialTasksStateType = {}
-
 // const initialTasksState = {
 //     [todolistID1]: [
 //         {id: v1(), title: 'HTML&CSS', isDone: true},
@@ -17,34 +15,6 @@ const initialState: InitialTasksStateType = {}
 //         {id: v1(), title: 'GraphQL', isDone: false},
 //     ],
 // }
-
-export type TaskType = {
-    description: string
-    title: string
-    completed: boolean
-    status: number
-    priority: number
-    startDate: string
-    deadline: string
-    id: string
-    todoListId: string
-    order: number
-    addedDate: string
-}
-
-type InitialTasksStateType = {
-    [key: string]: TaskType[]
-}
-
-export type UpdateTaskModelType = {
-    title: string
-    description: string
-    completed: boolean
-    status: number
-    priority: number
-    startDate: null | string
-    deadline: null | string
-}
 
 // ReturnType мы используем при работе с ф-циями и он типизирует возвращаемый результат
 // type RemoveTaskTypeAC = ReturnType<typeof removeTaskAC>
@@ -130,12 +100,49 @@ export type UpdateTaskModelType = {
 // export const updateTaskTitleAC = (todolistId: string, taskId: string, title: string) => {
 //     return {type: 'UPDATE-TASK-TITLE', payload: {todolistId, taskId, title}} as const
 // }
+
+const initialState: InitialTasksStateType = {}
+
+export type TaskType = {
+    description: string
+    title: string
+    completed: boolean
+    status: number
+    priority: number
+    startDate: string
+    deadline: string
+    id: string
+    todoListId: string
+    order: number
+    addedDate: string
+}
+
+type InitialTasksStateType = {
+    [key: string]: TaskType[]
+}
+
+export type UpdateTaskModelType = {
+    title: string
+    description: string
+    completed: boolean
+    status: number
+    priority: number
+    startDate: null | string
+    deadline: null | string
+}
+
 export const tasksSlice = createSlice({
     name: "tasks",
     initialState,
     reducers: {
-        setTasksAC(state, action: PayloadAction<InitialTasksStateType>) {
-            return action.payload
+        removeTodoListAC(state, action: PayloadAction<{ todolistId: string }>) {
+            delete state[action.payload.todolistId]
+        },
+        addTodoListAC(state, action: PayloadAction<{ todolistId: string }>) {
+            state[action.payload.todolistId] = []
+        },
+        setTasksAC(state, action: PayloadAction<{ todolistId: string, tasks: TaskType[] }>) {
+            state[action.payload.todolistId] = action.payload.tasks
         },
         addTaskAC(state, action: PayloadAction<TaskType>) {
             const task = action.payload
@@ -181,7 +188,7 @@ export const tasksReducer = tasksSlice.reducer
 // ==================Thunks
 export const setTasksTC = (todolistId: string) => (dispatch: any, getState: any) => {
     taskApi.getTasks(todolistId).then(res => {
-        dispatch({[todolistId]: res.data.items})
+        dispatch(setTasksAC({todolistId, tasks: res.data.items}))
     }).catch(err => {
         console.log(err.message)
     })

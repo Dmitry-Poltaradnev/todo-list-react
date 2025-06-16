@@ -1,7 +1,7 @@
 import {Dispatch} from "redux";
-import {changeStatusAppAC, setAppErrorAC} from "../module/app-slice";
+import {changeStatusAppAC, setAppErrorAC} from "../model/app-slice";
 import {ResponseType} from '../api/todolist-api'
-import {changeTodoListEntityStatusAC} from "../module/todoList-slice";
+import {changeTodoListEntityStatusAC} from "../model/todoList-slice";
 
 export const handleServerNetworkError = (dispatch: Dispatch, err: { message: string }) => {
     dispatch(setAppErrorAC(err.message))

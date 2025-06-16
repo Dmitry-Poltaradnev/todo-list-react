@@ -6,11 +6,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import Box from "@mui/material/Box";
 import {filterButtonsContainerSx} from "../../TodoList.styles";
-import {useSelector} from "react-redux";
-import {AppRootStateType, useAppDispatch} from "../../store";
-import {changeTodoListTC, removeTodoListTC, TodoListDomainType} from "../../module/todoList-slice";
-import {addTaskTC, setTasksTC, TaskType} from "../../module/task-slice";
+import {changeTodoListTC, removeTodoListTC, TodoListDomainType} from "../../model/todoList-slice";
+import {addTaskTC, setTasksTC, TaskType} from "../../model/task-slice";
 import {Task} from "./Tasks/Task";
+import {useAppDispatch} from "../../hooks/useAppDispatch";
+import {useAppSelector} from "../../hooks/useAppSelector";
+import {selectTasksByTodolistId} from "../../model/tasks-selectors";
 
 type PropsType = {
     todoList: TodoListDomainType
@@ -31,7 +32,7 @@ export const Todolist = memo(({todoList}: PropsType) => {
         dispatch(setTasksTC(todolistId))
     }, [dispatch, todolistId]);
 
-    const tasks: TaskType[] = useSelector<AppRootStateType, TaskType[]>(state => (state.tasks[todolistId] || []))
+    const tasks = useAppSelector(selectTasksByTodolistId(todolistId))
 
     const [filter, setFilter] = useState<FilterValues>(FilterValues.All)
 
@@ -62,7 +63,8 @@ export const Todolist = memo(({todoList}: PropsType) => {
     const task = tasks.length === 0
         ? <p>Task list is empty</p>
         : <ul>
-            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todolistId} task={task} entityStatus={todoList.entityStatus}/>)}
+            {filteredTasks.map((task: TaskType) => <Task key={task.id} todoListId={todolistId} task={task}
+                                                         entityStatus={todoList.entityStatus}/>)}
         </ul>
 
     const removeTodoListHandler = () => {
@@ -72,8 +74,9 @@ export const Todolist = memo(({todoList}: PropsType) => {
     return (
         <li style={{border: "solid 1px blue", borderRadius: '10px', padding: '20px', listStyle: 'none'}}>
             <div>
-                <EditableSpan entityStatus={todoList.entityStatus} oldTitle={todoList.title} changeTitleHandler={changeTodoListTitleHandler}/>
-                <IconButton  disabled={todoList.entityStatus === 'loading'} onClick={removeTodoListHandler}
+                <EditableSpan entityStatus={todoList.entityStatus} oldTitle={todoList.title}
+                              changeTitleHandler={changeTodoListTitleHandler}/>
+                <IconButton disabled={todoList.entityStatus === 'loading'} onClick={removeTodoListHandler}
                             aria-label="delete">
                     <DeleteIcon/>
                 </IconButton>
