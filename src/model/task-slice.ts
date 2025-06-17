@@ -1,4 +1,4 @@
-import {changeTodoListEntityStatusAC} from "./todoList-slice";
+import {addTodoListAC, changeTodoListEntityStatusAC, removeTodoListAC} from "./todoList-slice";
 import {taskApi} from "../api/task-api";
 import {changeStatusAppAC, ResultCode, setAppErrorAC} from "./app-slice";
 import {handleAppError, handleServerAppError, handleServerNetworkError} from "../common/utils";
@@ -135,12 +135,6 @@ export const tasksSlice = createSlice({
     name: "tasks",
     initialState,
     reducers: {
-        removeTodoListAC(state, action: PayloadAction<{ todolistId: string }>) {
-            delete state[action.payload.todolistId]
-        },
-        addTodoListAC(state, action: PayloadAction<{ todolistId: string }>) {
-            state[action.payload.todolistId] = []
-        },
         setTasksAC(state, action: PayloadAction<{ todolistId: string, tasks: TaskType[] }>) {
             state[action.payload.todolistId] = action.payload.tasks
         },
@@ -167,12 +161,21 @@ export const tasksSlice = createSlice({
         },
         updateTaskTitleAC(state, action: PayloadAction<{ todolistId: string, taskId: string, title: string }>) {
             const tasks = state[action.payload.todolistId];
-            if (!tasks) return
-            state[action.payload.todolistId] = tasks.map(item => item.id === action.payload.taskId ? {
-                ...item,
-                title: action.payload.title
-            } : item)
+            if (tasks) {
+                const task = tasks.find((item: TaskType) => item.id === action.payload.taskId)
+                if (!task) return
+                task.title = action.payload.title
+            }
         }
+    },
+    extraReducers: builder => {
+        builder
+            .addCase(addTodoListAC, (state, action) => {
+                state[action.payload.id] = []
+            })
+            .addCase(removeTodoListAC, (state, action) => {
+                delete state[action.payload.id]
+            })
     }
 })
 

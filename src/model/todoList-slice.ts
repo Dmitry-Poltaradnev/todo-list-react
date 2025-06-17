@@ -85,8 +85,9 @@ export const todoListSlice = createSlice({
                 entityStatus: 'idle'
             })
         },
-        removeTodoListAC(state, action: PayloadAction<string>) {
-            return state.filter(item => item.id !== action.payload)
+        removeTodoListAC(state, action: PayloadAction<{ id: string }>) {
+            const index = state.findIndex(item => item.id === action.payload.id)
+            if (index !== -1) state.splice(index, 1)
         },
         updateTodoListTitleAC(state, action: PayloadAction<{ id: string, title: string }>) {
             const todo = state.find(item => item.id === action.payload.id)
@@ -123,6 +124,7 @@ export const getTodosTC = () => (dispatch: any, getState: any) => {
 export const addTodoListTC = (title: string) => (dispatch: any, getState: any) => {
     todoListApi.addTodoList(title).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
+            console.log(res.data)
             dispatch(addTodoListAC({id: res.data.data.item.id, title}))
             dispatch(changeStatusAppAC('succeeded'))
         } else {
@@ -136,7 +138,7 @@ export const removeTodoListTC = (id: string) => (dispatch: any, getState: any) =
     dispatch(changeTodoListEntityStatusAC({id, entityStatus: 'loading'}))
     todoListApi.removeTodoList(id).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
-            dispatch(removeTodoListAC(id))
+            dispatch(removeTodoListAC({id}))
             dispatch(changeTodoListEntityStatusAC({id, entityStatus: 'succeeded'}))
         }
     }).catch(err => {
