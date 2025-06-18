@@ -6,6 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import {BrowserRouter} from "react-router-dom";
 import App from "./App";
 import store from "./store";
+import {ThemeWrapper} from "./components/ThemeWrapper";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -13,7 +14,9 @@ const root = ReactDOM.createRoot(
 root.render(
     <BrowserRouter>
         <Provider store={store}>
-            <App/>
+            <ThemeWrapper>
+                <App/>
+            </ThemeWrapper>
         </Provider>
     </BrowserRouter>
 );

@@ -124,7 +124,6 @@ export const getTodosTC = () => (dispatch: any, getState: any) => {
 export const addTodoListTC = (title: string) => (dispatch: any, getState: any) => {
     todoListApi.addTodoList(title).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
-            console.log(res.data)
             dispatch(addTodoListAC({id: res.data.data.item.id, title}))
             dispatch(changeStatusAppAC('succeeded'))
         } else {

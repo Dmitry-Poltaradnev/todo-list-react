@@ -1,5 +1,4 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {AppRootStateType} from "../store";
 
 export enum ThemeType {
     White = 'white',
@@ -55,9 +54,6 @@ export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 // export const setAppErrorAC = (error: string | null) => {
 //     return {type: 'SET-APP-ERROR', payload: {error}} as const;
 // }
-
-export const selectAppStatus = (state: AppRootStateType): RequestStatusType => state.app.appStatus
-export const themeValueSelect = (state: AppRootStateType): ThemeType => state.app.theme
 
 export const appSlice = createSlice({
     name: 'app',
