@@ -4,9 +4,9 @@ import './index.css';
 import {Provider} from "react-redux";
 import 'react-loading-skeleton/dist/skeleton.css';
 import {BrowserRouter} from "react-router-dom";
-import App from "./App";
-import store from "./store";
-import {ThemeWrapper} from "./components/ThemeWrapper";
+import {ThemeWrapper} from "./common/theme/ThemeWrapper";
+import App from "./app/App";
+import store from "./app/store";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement

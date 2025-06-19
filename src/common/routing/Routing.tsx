@@ -1,18 +1,17 @@
 import {Route, Routes} from "react-router-dom";
-import {Login} from "../../login/Login";
-import {TodoLists} from "../../TodoLists/TodoLists";
-import {PageNotFound} from "../../components/PageNotFound/PageNotFound";
-import {Main} from "../../components/Main/Main";
+import {Login} from "../components/Login/Login";
+import {PageNotFound} from "../components/PageNotFound/PageNotFound";
+import {Main} from "../../app/Main";
 
 export const Path = {
-    TodoLists: '/todo-list-react',
-    Login: '/login',
+    Main: '/todo-list-react',
+    Login: '/Login',
     NotFound: '*',
 } as const
 
 export const Routing = () => (
     <Routes>
-        <Route path={Path.TodoLists} element={<Main/>}/>
+        <Route path={Path.Main} element={<Main/>}/>
         <Route path={Path.Login} element={<Login/>}/>
         <Route path={Path.NotFound} element={<PageNotFound/>}/>
     </Routes>

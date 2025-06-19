@@ -1,0 +1,17 @@
+.whiteTheme {
+    background-color: white;
+}
+
+.blackTheme {
+    background-color: azure;
+}
+
+.btnChangeTheme {
+    background-color: #e7fdd8;
+    color: black;
+    font-weight: bold;
+    border-radius: 10px;
+    border: solid 1px red;
+    padding: 10px;
+    cursor: pointer;
+}
