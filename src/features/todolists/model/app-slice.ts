@@ -1,17 +1,17 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 export enum ThemeType {
-    White = 'white',
-    Dark = 'dark',
+  White = "white",
+  Dark = "dark",
 }
 
 export enum ResultCode {
-    Success = 0,
-    Error = 1,
-    Captcha = 10,
+  Success = 0,
+  Error = 1,
+  Captcha = 10,
 }
 
-export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
+export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed"
 
 // const initAppState = {
 //     appStatus: 'idle' as RequestStatusType,
@@ -56,24 +56,24 @@ export type RequestStatusType = 'idle' | 'loading' | 'succeeded' | 'failed'
 // }
 
 export const appSlice = createSlice({
-    name: 'app',
-    initialState: {
-        appStatus: 'idle' as RequestStatusType,
-        theme: ThemeType.White,
-        error: null as string | null
+  name: "app",
+  initialState: {
+    appStatus: "idle" as RequestStatusType,
+    theme: ThemeType.White,
+    error: null as string | null,
+  },
+  reducers: {
+    toggleThemeAC(state) {
+      state.theme = state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White
     },
-    reducers: {
-        toggleThemeAC(state) {
-            state.theme = state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White
-        },
-        changeStatusAppAC(state, action: PayloadAction<RequestStatusType>) {
-            state.appStatus = action.payload
-        },
-        setAppErrorAC(state, action: PayloadAction<string | null>) {
-            state.error = action.payload
-        }
-    }
+    changeStatusAppAC(state, action: PayloadAction<RequestStatusType>) {
+      state.appStatus = action.payload
+    },
+    setAppErrorAC(state, action: PayloadAction<string | null>) {
+      state.error = action.payload
+    },
+  },
 })
 
-export const {toggleThemeAC, changeStatusAppAC, setAppErrorAC} = appSlice.actions
+export const { toggleThemeAC, changeStatusAppAC, setAppErrorAC } = appSlice.actions
 export const appReducer = appSlice.reducer

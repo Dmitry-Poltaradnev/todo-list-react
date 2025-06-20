@@ -1,5 +1,5 @@
-import {AppRootStateType} from "../../../app/store";
-import {RequestStatusType, ThemeType} from "./app-slice";
+import { AppRootStateType } from "../../../app/store"
+import { RequestStatusType, ThemeType } from "./app-slice"
 
 //  useSelector<AppRootStateType, TodoListDomainType[]>
 // 1) AppRootStateType - типизация всего что возвращают редусеры

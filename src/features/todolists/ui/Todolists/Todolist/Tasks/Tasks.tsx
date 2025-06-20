@@ -1,66 +1,77 @@
-import {filterButtonsContainerSx} from "./Tasks.styles";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import React, {useState} from 'react';
-import {TaskType} from "../../../../model/task-slice";
-import {Task} from "./Task/Task";
-import {useAppSelector} from "../../../../../../common/hooks/useAppSelector";
-import {selectTasksByTodolistId} from "../../../../model/tasks-selectors";
-import {selectEntityStatusById} from "../../../../model/todolists-selectors";
+import { filterButtonsContainerSx } from "./Tasks.styles"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
+import React, { useState } from "react"
+import { TaskType } from "../../../../model/task-slice"
+import { Task } from "./Task/Task"
+import { useAppSelector } from "../../../../../../common/hooks/useAppSelector"
+import { selectTasksByTodolistId } from "../../../../model/tasks-selectors"
+import { selectEntityStatusById } from "../../../../model/todolists-selectors"
 
 type TasksPropsType = {
-    todolistId: string
+  todolistId: string
 }
 
 enum FilterValues {
-    All = 'all',
-    Active = 'active',
-    Completed = 'completed'
+  All = "all",
+  Active = "active",
+  Completed = "completed",
 }
 
-export const Tasks = ({todolistId}: TasksPropsType) => {
+export const Tasks = ({ todolistId }: TasksPropsType) => {
+  const tasks = useAppSelector(selectTasksByTodolistId(todolistId))
 
-    const tasks = useAppSelector(selectTasksByTodolistId(todolistId))
+  const todoListEntityStatus = useAppSelector(selectEntityStatusById(todolistId))
 
-    const todoListEntityStatus = useAppSelector(selectEntityStatusById(todolistId))
+  const [filter, setFilter] = useState<FilterValues>(FilterValues.All)
 
-    const [filter, setFilter] = useState<FilterValues>(FilterValues.All)
-
-    const filterTasks = (filter: FilterValues, tasks: TaskType[]) => {
-        if (filter === FilterValues.Active) {
-            return tasks.filter(task => !task.status)
-        }
-        if (filter === FilterValues.Completed) {
-            return tasks.filter(task => task.status)
-        }
-        return tasks
+  const filterTasks = (filter: FilterValues, tasks: TaskType[]) => {
+    if (filter === FilterValues.Active) {
+      return tasks.filter((task) => !task.status)
     }
-
-    const filteredTasks = filterTasks(filter, tasks)
-
-    const changeFilter = (filter: FilterValues) => {
-        setFilter(filter)
+    if (filter === FilterValues.Completed) {
+      return tasks.filter((task) => task.status)
     }
+    return tasks
+  }
 
-    return (
-        <div>
-            <ul>
-                {
-                    tasks.length ? filteredTasks.map((task) => <Task key={task.id} todoListId={todolistId}
-                                                                     task={task}
-                                                                     entityStatus={todoListEntityStatus}/>) :
-                        <p>Task list is empty</p>
-                }
-            </ul>
-            <Box sx={filterButtonsContainerSx}>
-                <Button onClick={() => changeFilter(FilterValues.All)}
-                        variant={filter === FilterValues.All ? "outlined" : "contained"}>All</Button>
-                <Button onClick={() => changeFilter(FilterValues.Active)}
-                        variant={filter === FilterValues.Active ? "outlined" : "contained"}>Active</Button>
-                <Button onClick={() => changeFilter(FilterValues.Completed)}
-                        variant={filter === FilterValues.Completed ? "outlined" : "contained"}>Completed</Button>
-            </Box>
-        </div>
-    );
-};
+  const filteredTasks = filterTasks(filter, tasks)
 
+  const changeFilter = (filter: FilterValues) => {
+    setFilter(filter)
+  }
+
+  return (
+    <div>
+      <ul>
+        {tasks.length ? (
+          filteredTasks.map((task) => (
+            <Task key={task.id} todoListId={todolistId} task={task} entityStatus={todoListEntityStatus} />
+          ))
+        ) : (
+          <p>Task list is empty</p>
+        )}
+      </ul>
+      <Box sx={filterButtonsContainerSx}>
+        <Button
+          onClick={() => changeFilter(FilterValues.All)}
+          variant={filter === FilterValues.All ? "outlined" : "contained"}
+        >
+          All
+        </Button>
+        <Button
+          onClick={() => changeFilter(FilterValues.Active)}
+          variant={filter === FilterValues.Active ? "outlined" : "contained"}
+        >
+          Active
+        </Button>
+        <Button
+          onClick={() => changeFilter(FilterValues.Completed)}
+          variant={filter === FilterValues.Completed ? "outlined" : "contained"}
+        >
+          Completed
+        </Button>
+      </Box>
+    </div>
+  )
+}
