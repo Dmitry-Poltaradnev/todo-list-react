@@ -7,11 +7,11 @@ import {useAppDispatch} from "../../../../../common/hooks/useAppDispatch";
 import {Tasks} from "./Tasks/Tasks";
 import {TodoListTitle} from "./TodolistTitle/TodoListTitle";
 
-type PropsType = {
+type TodoListPropsType = {
     todoList: TodoListDomainType
 }
 
-export const Todolist = memo(({todoList}: PropsType) => {
+export const Todolist = memo(({todoList}: TodoListPropsType) => {
 
     const dispatch = useAppDispatch();
 

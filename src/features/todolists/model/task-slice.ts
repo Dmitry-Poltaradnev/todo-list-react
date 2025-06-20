@@ -147,24 +147,27 @@ export const tasksSlice = createSlice({
             }
         },
         removeTaskAC(state, action: PayloadAction<{ todolistId: string, taskId: string }>) {
-            if (state[action.payload.todolistId]) {
-                state[action.payload.todolistId] = state[action.payload.todolistId].filter(item => item.id !== action.payload.taskId)
+            const {todolistId, taskId} = action.payload
+            if (state[todolistId]) {
+                state[todolistId] = state[todolistId].filter(item => item.id !== taskId)
             }
         },
         changeTaskStatusAC(state, action: PayloadAction<{ todolistId: string, taskId: string, newStatus: number }>) {
-            const tasks = state[action.payload.todolistId];
+            const {todolistId, taskId, newStatus} = action.payload
+            const tasks = state[todolistId];
             if (!tasks) return
-            state[action.payload.todolistId] = tasks.map(item => item.id === action.payload.taskId ? {
+            state[todolistId] = tasks.map(item => item.id === taskId ? {
                 ...item,
-                status: action.payload.newStatus
+                status: newStatus
             } : item)
         },
         updateTaskTitleAC(state, action: PayloadAction<{ todolistId: string, taskId: string, title: string }>) {
-            const tasks = state[action.payload.todolistId];
+            const {todolistId, taskId, title} = action.payload
+            const tasks = state[todolistId];
             if (tasks) {
-                const task = tasks.find((item: TaskType) => item.id === action.payload.taskId)
+                const task = tasks.find((item: TaskType) => item.id === taskId)
                 if (!task) return
-                task.title = action.payload.title
+                task.title = title
             }
         }
     },
@@ -189,7 +192,7 @@ export const {
 
 export const tasksReducer = tasksSlice.reducer
 // ==================Thunks
-export const setTasksTC = (todolistId: string) => (dispatch: any, getState: any) => {
+export const setTasksTC = (todolistId: string) => (dispatch: any) => {
     taskApi.getTasks(todolistId).then(res => {
         dispatch(setTasksAC({todolistId, tasks: res.data.items}))
     }).catch(err => {
@@ -197,9 +200,9 @@ export const setTasksTC = (todolistId: string) => (dispatch: any, getState: any)
     })
 }
 
-export const addTaskTC = (todoListId: string, title: string) => (dispatch: any, getState: any) => {
+export const addTaskTC = (todolistId: string, title: string) => (dispatch: any) => {
     dispatch(changeStatusAppAC('loading'))
-    taskApi.addTask(todoListId, title).then(res => {
+    taskApi.addTask({todolistId, title}).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
             dispatch(addTaskAC(res.data.data.item))
             dispatch(changeStatusAppAC('succeeded'))
@@ -211,9 +214,9 @@ export const addTaskTC = (todoListId: string, title: string) => (dispatch: any, 
     })
 }
 
-export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: any, getState: any) => {
+export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: any) => {
     dispatch(changeTodoListEntityStatusAC({id: todolistId, entityStatus: 'loading'}))
-    taskApi.removeTask(todolistId, taskId).then(res => {
+    taskApi.removeTask({todolistId, taskId}).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
             dispatch(removeTaskAC({todolistId, taskId}))
             dispatch(changeTodoListEntityStatusAC({id: todolistId, entityStatus: 'idle'}))
@@ -245,7 +248,7 @@ export const updateTaskTC = (todolistId: string, taskId: string, domainModel: Pa
         ...domainModel
     }
     dispatch(changeTodoListEntityStatusAC({id: todolistId, entityStatus: 'loading'}))
-    taskApi.updateTaskStatus(todolistId, taskId, model).then(res => {
+    taskApi.updateTaskStatus({todolistId, taskId, model}).then(res => {
         if (res.data.resultCode === ResultCode.Success) {
             if (domainModel.status !== undefined) {
                 dispatch(changeTaskStatusAC({todolistId, taskId, newStatus: domainModel.status}))
