@@ -2,11 +2,11 @@ import { filterButtonsContainerSx } from "./Tasks.styles"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import React, { useState } from "react"
-import { TaskType } from "../../../../model/task-slice"
 import { Task } from "./Task/Task"
 import { useAppSelector } from "../../../../../../common/hooks/useAppSelector"
 import { selectTasksByTodolistId } from "../../../../model/tasks-selectors"
 import { selectEntityStatusById } from "../../../../model/todolists-selectors"
+import { TaskType } from "../../../../api/tasksApi.types"
 
 type TasksPropsType = {
   todolistId: string

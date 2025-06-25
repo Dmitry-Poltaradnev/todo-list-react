@@ -1,11 +1,12 @@
 import React, { ChangeEvent, memo } from "react"
-import { removeTaskTC, TaskType, updateTaskTC } from "../../../../../model/task-slice"
+import { removeTaskTC, updateTaskTC } from "../../../../../model/task-slice"
 import IconButton from "@mui/material/IconButton"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { EditableSpan } from "../../../../../../../common/components/EditableSpan/EditableSpan"
 import { Checkbox } from "@mui/material"
 import { RequestStatusType } from "../../../../../model/app-slice"
 import { useAppDispatch } from "../../../../../../../common/hooks/useAppDispatch"
+import { TaskType } from "../../../../../api/tasksApi.types"
 
 type TaskPropsType = {
   task: TaskType

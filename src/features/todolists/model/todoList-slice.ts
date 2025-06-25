@@ -3,6 +3,7 @@ import { changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC } from 
 import { handleAppError, handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { TodoListType } from "../api/todolistsApi.types"
+import { setTasksTC } from "./task-slice"
 
 // type TodoListReducerType =
 //     RemoveTodoListActionType
@@ -113,6 +114,7 @@ export const getTodosTC = () => (dispatch: any) => {
     .then((res) => {
       const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({ ...todoList, entityStatus: "idle" }))
       dispatch(setTodoListsAC(domainTodoLists))
+      domainTodoLists.forEach((item) => dispatch(setTasksTC(item.id)))
       dispatch(changeStatusAppAC("succeeded"))
     })
     .catch((err) => {

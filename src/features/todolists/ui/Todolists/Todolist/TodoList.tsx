@@ -1,8 +1,8 @@
 import s from "./TodoList.module.css"
-import React, { memo, useEffect } from "react"
+import React, { memo } from "react"
 import { AddItemForm } from "../../../../../common/components/AddItemForm/AddItemForm"
 import { TodoListDomainType } from "../../../model/todoList-slice"
-import { addTaskTC, setTasksTC } from "../../../model/task-slice"
+import { addTaskTC } from "../../../model/task-slice"
 import { useAppDispatch } from "../../../../../common/hooks/useAppDispatch"
 import { Tasks } from "./Tasks/Tasks"
 import { TodoListTitle } from "./TodolistTitle/TodoListTitle"
@@ -15,10 +15,6 @@ export const Todolist = memo(({ todoList }: TodoListPropsType) => {
   const dispatch = useAppDispatch()
 
   const todolistId = todoList.id
-
-  useEffect(() => {
-    dispatch(setTasksTC(todolistId))
-  }, [dispatch, todolistId])
 
   const addTaskHandler = (title: string) => {
     dispatch(addTaskTC(todolistId, title))

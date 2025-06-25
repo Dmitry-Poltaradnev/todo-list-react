@@ -3,6 +3,7 @@ import { taskApi } from "../api/task-api"
 import { changeStatusAppAC, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleAppError, handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { TaskType } from "../api/tasksApi.types"
 
 // const initialTasksState = {
 //     [todolistID1]: [
@@ -103,20 +104,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 const initialState: InitialTasksStateType = {}
 
-export type TaskType = {
-  description: string
-  title: string
-  completed: boolean
-  status: number
-  priority: number
-  startDate: string
-  deadline: string
-  id: string
-  todoListId: string
-  order: number
-  addedDate: string
-}
-
 type InitialTasksStateType = {
   [key: string]: TaskType[]
 }
@@ -124,7 +111,6 @@ type InitialTasksStateType = {
 export type UpdateTaskModelType = {
   title: string
   description: string
-  completed: boolean
   status: number
   priority: number
   startDate: null | string
@@ -138,6 +124,19 @@ export const tasksSlice = createSlice({
     setTasksAC(state, action: PayloadAction<{ todolistId: string; tasks: TaskType[] }>) {
       state[action.payload.todolistId] = action.payload.tasks
     },
+
+    // const initialTasksState = {
+    //     [todolistID1]: [
+    //         {id: v1(), title: 'HTML&CSS', isDone: true},
+    //         {id: v1(), title: 'JS', isDone: true},
+    //         {id: v1(), title: 'ReactJS', isDone: false},
+    //     ],
+    //     [todolistID2]: [
+    //         {id: v1(), title: 'Rest API', isDone: true},
+    //         {id: v1(), title: 'GraphQL', isDone: false},
+    //     ],
+    // }
+
     addTaskAC(state, action: PayloadAction<TaskType>) {
       const task = action.payload
       if (state[task.todoListId]) {
@@ -251,7 +250,6 @@ export const updateTaskTC =
       priority: task.priority,
       startDate: task.startDate ?? null,
       deadline: task.deadline ?? null,
-      completed: task.completed,
       status: task.status,
       ...domainModel,
     }
