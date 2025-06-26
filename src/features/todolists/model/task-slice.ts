@@ -3,7 +3,8 @@ import { taskApi } from "../api/task-api"
 import { changeStatusAppAC, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleAppError, handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { TaskType } from "../api/tasksApi.types"
+import { TaskType, UpdateTaskModelType } from "../api/tasksApi.types"
+import { RequestStatus } from "../../../common/types/types"
 
 // const initialTasksState = {
 //     [todolistID1]: [
@@ -108,15 +109,6 @@ type InitialTasksStateType = {
   [key: string]: TaskType[]
 }
 
-export type UpdateTaskModelType = {
-  title: string
-  description: string
-  status: number
-  priority: number
-  startDate: null | string
-  deadline: null | string
-}
-
 export const tasksSlice = createSlice({
   name: "tasks",
   initialState,
@@ -124,19 +116,6 @@ export const tasksSlice = createSlice({
     setTasksAC(state, action: PayloadAction<{ todolistId: string; tasks: TaskType[] }>) {
       state[action.payload.todolistId] = action.payload.tasks
     },
-
-    // const initialTasksState = {
-    //     [todolistID1]: [
-    //         {id: v1(), title: 'HTML&CSS', isDone: true},
-    //         {id: v1(), title: 'JS', isDone: true},
-    //         {id: v1(), title: 'ReactJS', isDone: false},
-    //     ],
-    //     [todolistID2]: [
-    //         {id: v1(), title: 'Rest API', isDone: true},
-    //         {id: v1(), title: 'GraphQL', isDone: false},
-    //     ],
-    // }
-
     addTaskAC(state, action: PayloadAction<TaskType>) {
       const task = action.payload
       if (state[task.todoListId]) {
@@ -201,13 +180,13 @@ export const setTasksTC = (todolistId: string) => (dispatch: any) => {
 }
 
 export const addTaskTC = (todolistId: string, title: string) => (dispatch: any) => {
-  dispatch(changeStatusAppAC("loading"))
+  dispatch(changeStatusAppAC(RequestStatus.Loading))
   taskApi
     .addTask({ todolistId, title })
     .then((res) => {
       if (res.data.resultCode === ResultCode.Success) {
         dispatch(addTaskAC(res.data.data.item))
-        dispatch(changeStatusAppAC("succeeded"))
+        dispatch(changeStatusAppAC(RequestStatus.Success))
       } else {
         handleServerAppError(dispatch, res.data)
       }
@@ -255,7 +234,7 @@ export const updateTaskTC =
     }
     dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "loading" }))
     taskApi
-      .updateTaskStatus({ todolistId, taskId, model })
+      .updateTask({ todolistId, taskId, model })
       .then((res) => {
         if (res.data.resultCode === ResultCode.Success) {
           if (domainModel.status !== undefined) {

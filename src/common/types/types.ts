@@ -4,3 +4,8 @@ export type BaseResponse<T = {}> = {
   data: T
   fieldsErrors: string[]
 }
+
+export enum RequestStatus {
+  Loading = "loading",
+  Success = "succeeded",
+}

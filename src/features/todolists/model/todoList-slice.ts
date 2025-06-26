@@ -4,6 +4,7 @@ import { handleAppError, handleServerAppError, handleServerNetworkError } from "
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { TodoListType } from "../api/todolistsApi.types"
 import { setTasksTC } from "./task-slice"
+import { RequestStatus } from "../../../common/types/types"
 
 // type TodoListReducerType =
 //     RemoveTodoListActionType
@@ -108,14 +109,14 @@ export const todoListReducer = todoListSlice.reducer
 
 // ==================Thunks
 export const getTodosTC = () => (dispatch: any) => {
-  dispatch(changeStatusAppAC("loading"))
+  dispatch(changeStatusAppAC(RequestStatus.Loading))
   todoListApi
     .getTodoLists()
     .then((res) => {
       const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({ ...todoList, entityStatus: "idle" }))
       dispatch(setTodoListsAC(domainTodoLists))
       domainTodoLists.forEach((item) => dispatch(setTasksTC(item.id)))
-      dispatch(changeStatusAppAC("succeeded"))
+      dispatch(changeStatusAppAC(RequestStatus.Success))
     })
     .catch((err) => {
       console.log(err.message)
@@ -128,7 +129,7 @@ export const addTodoListTC = (title: string) => (dispatch: any) => {
       if (res.data.resultCode === ResultCode.Success) {
         const { id, order, addedDate } = res.data.data.item
         dispatch(addTodoListAC({ id, title, order, addedDate }))
-        dispatch(changeStatusAppAC("succeeded"))
+        dispatch(changeStatusAppAC(RequestStatus.Success))
       } else {
         handleServerAppError(dispatch, res.data)
       }

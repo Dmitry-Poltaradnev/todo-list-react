@@ -1,7 +1,6 @@
-import { UpdateTaskModelType } from "../model/task-slice"
 import { BaseResponse } from "../../../common/types/types"
 import { instance } from "../../../common/instance/instance"
-import { GetTasksResponse, TaskType } from "./tasksApi.types"
+import { GetTasksResponse, TaskType, UpdateTaskModelType } from "./tasksApi.types"
 
 export const taskApi = {
   getTasks(todolistId: string) {
@@ -15,7 +14,7 @@ export const taskApi = {
   removeTask({ todolistId, taskId }: { todolistId: string; taskId: string }) {
     return instance.delete<BaseResponse>(`/todo-lists/${todolistId}/tasks/${taskId}`)
   },
-  updateTaskStatus({ todolistId, taskId, model }: { todolistId: string; taskId: string; model: UpdateTaskModelType }) {
+  updateTask({ todolistId, taskId, model }: { todolistId: string; taskId: string; model: UpdateTaskModelType }) {
     return instance.put<BaseResponse<TaskType>>(`/todo-lists/${todolistId}/tasks/${taskId}`, model)
   },
 }

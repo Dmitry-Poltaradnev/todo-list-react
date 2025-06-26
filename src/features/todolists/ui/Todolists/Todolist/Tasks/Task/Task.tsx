@@ -6,7 +6,7 @@ import { EditableSpan } from "../../../../../../../common/components/EditableSpa
 import { Checkbox } from "@mui/material"
 import { RequestStatusType } from "../../../../../model/app-slice"
 import { useAppDispatch } from "../../../../../../../common/hooks/useAppDispatch"
-import { TaskType } from "../../../../../api/tasksApi.types"
+import { TaskStatus, TaskType } from "../../../../../api/tasksApi.types"
 
 type TaskPropsType = {
   task: TaskType
@@ -26,7 +26,7 @@ export const Task = memo(({ todoListId, task, entityStatus }: TaskPropsType) => 
   }
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const newStatus = e.target.checked ? 2 : 0
+    const newStatus = e.target.checked ? TaskStatus.Complete : TaskStatus.New
     dispatch(updateTaskTC(todoListId, task.id, { status: newStatus }))
   }
 
