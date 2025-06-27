@@ -1,16 +1,17 @@
-import { tasksReducer } from "../features/todolists/model/task-slice"
-import { todoListReducer } from "../features/todolists/model/todoList-slice"
-import { appReducer } from "../features/todolists/model/app-slice"
+import { tasksReducer, tasksSlice } from "../features/todolists/model/task-slice"
+import { todoListReducer, todoListSlice } from "../features/todolists/model/todoList-slice"
+import { appReducer, appSlice } from "../features/todolists/model/app-slice"
 import { configureStore } from "@reduxjs/toolkit"
-import { authReducer } from "../features/todolists/model/auth-slice"
+import { authReducer, authSlice } from "../features/todolists/model/auth-slice"
 
 const store = configureStore({
   reducer: {
-    app: appReducer,
-    auth: authReducer,
-    todolists: todoListReducer,
-    tasks: tasksReducer,
+    [appSlice.name]: appReducer,
+    [authSlice.name]: authReducer,
+    [todoListSlice.name]: todoListReducer,
+    [tasksSlice.name]: tasksReducer,
   },
+  devTools: process.env.NODE_ENV !== "production",
 })
 // TypeScript-утилита, которая извлекает тип возвращаемого значения этой функции.
 export type AppRootStateType = ReturnType<typeof store.getState>

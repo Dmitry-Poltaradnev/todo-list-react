@@ -2,7 +2,7 @@ import { addTodoListAC, changeTodoListEntityStatusAC, removeTodoListAC } from ".
 import { taskApi } from "../api/task-api"
 import { changeStatusAppAC, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleAppError, handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { TaskType, UpdateTaskModelType } from "../api/tasksApi.types"
 import { RequestStatus } from "../../../common/types/types"
 
@@ -103,34 +103,32 @@ import { RequestStatus } from "../../../common/types/types"
 //     return {type: 'UPDATE-TASK-TITLE', payload: {todolistId, taskId, title}} as const
 // }
 
-const initialState: InitialTasksStateType = {}
-
 type InitialTasksStateType = {
   [key: string]: TaskType[]
 }
 
 export const tasksSlice = createSlice({
   name: "tasks",
-  initialState,
-  reducers: {
-    setTasksAC(state, action: PayloadAction<{ todolistId: string; tasks: TaskType[] }>) {
+  initialState: {} as InitialTasksStateType,
+  reducers: (create) => ({
+    setTasksAC: create.reducer<{ todolistId: string; tasks: TaskType[] }>((state, action) => {
       state[action.payload.todolistId] = action.payload.tasks
-    },
-    addTaskAC(state, action: PayloadAction<TaskType>) {
+    }),
+    addTaskAC: create.reducer<TaskType>((state, action) => {
       const task = action.payload
       if (state[task.todoListId]) {
         state[task.todoListId].unshift(task)
       } else {
         state[task.todoListId] = [task]
       }
-    },
-    removeTaskAC(state, action: PayloadAction<{ todolistId: string; taskId: string }>) {
+    }),
+    removeTaskAC: create.reducer<{ todolistId: string; taskId: string }>((state, action) => {
       const { todolistId, taskId } = action.payload
       if (state[todolistId]) {
         state[todolistId] = state[todolistId].filter((item) => item.id !== taskId)
       }
-    },
-    changeTaskStatusAC(state, action: PayloadAction<{ todolistId: string; taskId: string; newStatus: number }>) {
+    }),
+    changeTaskStatusAC: create.reducer<{ todolistId: string; taskId: string; newStatus: number }>((state, action) => {
       const { todolistId, taskId, newStatus } = action.payload
       const tasks = state[todolistId]
       if (!tasks) return
@@ -142,8 +140,8 @@ export const tasksSlice = createSlice({
             }
           : item,
       )
-    },
-    updateTaskTitleAC(state, action: PayloadAction<{ todolistId: string; taskId: string; title: string }>) {
+    }),
+    updateTaskTitleAC: create.reducer<{ todolistId: string; taskId: string; title: string }>((state, action) => {
       const { todolistId, taskId, title } = action.payload
       const tasks = state[todolistId]
       if (tasks) {
@@ -151,8 +149,8 @@ export const tasksSlice = createSlice({
         if (!task) return
         task.title = title
       }
-    },
-  },
+    }),
+  }),
   extraReducers: (builder) => {
     builder
       .addCase(addTodoListAC, (state, action) => {
@@ -162,11 +160,15 @@ export const tasksSlice = createSlice({
         delete state[action.payload.id]
       })
   },
+  selectors: {
+    selectTasks: (state) => state,
+  },
 })
 
 export const { setTasksAC, addTaskAC, removeTaskAC, changeTaskStatusAC, updateTaskTitleAC } = tasksSlice.actions
 
 export const tasksReducer = tasksSlice.reducer
+export const { selectTasks } = tasksSlice.selectors
 // ==================Thunks
 export const setTasksTC = (todolistId: string) => (dispatch: any) => {
   taskApi

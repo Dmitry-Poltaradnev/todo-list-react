@@ -31,12 +31,12 @@ export const Task = memo(({ todoListId, task, entityStatus }: TaskPropsType) => 
   }
 
   return (
-    <li style={{ listStyle: "none" }}>
+    <>
       <Checkbox disabled={entityStatus === "loading"} checked={task.status === 2} onChange={changeTaskStatusHandler} />
       <EditableSpan entityStatus={entityStatus} oldTitle={task.title} changeTitleHandler={changeTaskTitleHandler} />
       <IconButton disabled={entityStatus === "loading"} onClick={removeTaskHandler} aria-label="delete">
         <DeleteIcon />
       </IconButton>
-    </li>
+    </>
   )
 })

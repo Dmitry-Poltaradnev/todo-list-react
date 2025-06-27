@@ -44,9 +44,11 @@ export const Tasks = ({ todolistId }: TasksPropsType) => {
   return (
     <div>
       <ul>
-        {tasks.length ? (
+        {filteredTasks.length > 0 ? (
           filteredTasks.map((task) => (
-            <Task key={task.id} todoListId={todolistId} task={task} entityStatus={todoListEntityStatus} />
+            <li style={{ listStyle: "none" }} key={task.id}>
+              <Task todoListId={todolistId} task={task} entityStatus={todoListEntityStatus} />
+            </li>
           ))
         ) : (
           <p>Task list is empty</p>

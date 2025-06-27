@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 
 export enum ThemeType {
   White = "white",
@@ -13,48 +13,6 @@ export enum ResultCode {
 
 export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed"
 
-// const initAppState = {
-//     appStatus: 'idle' as RequestStatusType,
-//     theme: ThemeType.White,
-//     error: null as string | null
-// }
-
-// type InitAppStateType = typeof initAppState
-
-// type ToggleThemeType = ReturnType<typeof toggleThemeAC>
-// export type ChangeStatusType = ReturnType<typeof changeStatusAppAC>
-// export type SetAppErrorType = ReturnType<typeof setAppErrorAC>
-//
-// type AppReducerType = ToggleThemeType | ChangeStatusType | SetAppErrorType
-
-// export const appSlice = (state: InitAppStateType = initAppState, action: AppReducerType): InitAppStateType => {
-//     switch (action.type) {
-//         case 'TOGGLE-THEME': {
-//             return {...state, theme: state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White}
-//         }
-//         case 'SET-APP-STATUS': {
-//             const {status} = action.payload
-//             return {...state, appStatus: status}
-//         }
-//         case 'SET-APP-ERROR': {
-//             const {error} = action.payload
-//             return {...state, error: error}
-//         }
-//         default:
-//             return state;
-//     }
-// }
-//
-// export const toggleThemeAC = () => {
-//     return {type: 'TOGGLE-THEME'} as const;
-// }
-// export const changeStatusAppAC = (status: RequestStatusType) => {
-//     return {type: 'SET-APP-STATUS', payload: {status}} as const;
-// }
-// export const setAppErrorAC = (error: string | null) => {
-//     return {type: 'SET-APP-ERROR', payload: {error}} as const;
-// }
-
 export const appSlice = createSlice({
   name: "app",
   initialState: {
@@ -62,18 +20,26 @@ export const appSlice = createSlice({
     theme: ThemeType.White,
     error: null as string | null,
   },
-  reducers: {
-    toggleThemeAC(state) {
-      state.theme = state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White
-    },
-    changeStatusAppAC(state, action: PayloadAction<RequestStatusType>) {
-      state.appStatus = action.payload
-    },
-    setAppErrorAC(state, action: PayloadAction<string | null>) {
-      state.error = action.payload
-    },
+  reducers: (create) => {
+    return {
+      toggleThemeAC: create.reducer((state) => {
+        state.theme = state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White
+      }),
+      changeStatusAppAC: create.reducer<RequestStatusType>((state, action) => {
+        state.appStatus = action.payload
+      }),
+      setAppErrorAC: create.reducer<string | null>((state, action) => {
+        state.error = action.payload
+      }),
+    }
+  },
+  selectors: {
+    selectAppStatus: (state) => state.appStatus,
+    selectAppTheme: (state) => state.theme,
+    selectAppError: (state) => state.error,
   },
 })
 
 export const { toggleThemeAC, changeStatusAppAC, setAppErrorAC } = appSlice.actions
 export const appReducer = appSlice.reducer
+export const { selectAppStatus, selectAppTheme, selectAppError } = appSlice.selectors

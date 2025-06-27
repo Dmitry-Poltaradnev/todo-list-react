@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { Dispatch } from "redux"
 import { authApi } from "../api/auth-api"
 import { ResultCode } from "./app-slice"
@@ -6,30 +6,25 @@ import { handleServerAppError, handleServerNetworkError } from "../../../common/
 import { Path } from "../../../common/routing/Routing"
 import { LoginFormType } from "../../../common/components/Login/Login"
 
-// const initialState = {
-//     isLoggedIn: false
-// }
-//
-// type InitStateType = typeof initialState
-//
-// type SetIsLoggedIndType = ReturnType<typeof setIsLoggedAC>
-//
-// type ActionsType = SetIsLoggedIndType | ChangeStatusType | SetAppErrorType
-//
-// export const authReducer = (state: InitStateType = initialState, action: ActionsType): InitStateType => {
-//     switch (action.type) {
-//         case 'SET-IS-LOGGED-IN' : {
-//             return {...state, isLoggedIn: action.payload}
-//         }
-//         default:
-//             return state;
-//     }
-// }
-//
-// export const setIsLoggedAC = (value: boolean) => {
-//     return {type: 'SET-IS-LOGGED-IN', payload: value} as const
-// }
-//
+export const authSlice = createSlice({
+  name: "auth",
+  initialState: {
+    isLoggedIn: false,
+  },
+  reducers: (create) => ({
+    setIsLoggedAC: create.reducer<boolean>((state, action) => {
+      state.isLoggedIn = action.payload
+    }),
+  }),
+  selectors: {
+    selectIsLoggedIn: (state) => state.isLoggedIn,
+  },
+})
+
+export const { setIsLoggedAC } = authSlice.actions
+export const { selectIsLoggedIn } = authSlice.selectors
+export const authReducer = authSlice.reducer
+
 export const loginTC = (data: LoginFormType, navigate: any) => (dispatch: Dispatch<any>) => {
   authApi
     .login(data)
@@ -45,18 +40,3 @@ export const loginTC = (data: LoginFormType, navigate: any) => (dispatch: Dispat
       handleServerNetworkError(dispatch, err)
     })
 }
-
-export const authSlice = createSlice({
-  name: "auth",
-  initialState: {
-    isLoggedIn: false,
-  },
-  reducers: {
-    setIsLoggedAC(state, action: PayloadAction<boolean>) {
-      state.isLoggedIn = action.payload
-    },
-  },
-})
-
-export const { setIsLoggedAC } = authSlice.actions
-export const authReducer = authSlice.reducer

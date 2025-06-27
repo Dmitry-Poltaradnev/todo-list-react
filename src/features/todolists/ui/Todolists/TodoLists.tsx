@@ -2,8 +2,8 @@ import React from "react"
 import { Todolist } from "./Todolist/TodoList"
 import { SkeletonTodoList } from "./Todolist/SkeletonTodolist/SkeletonTodoList"
 import { useAppSelector } from "../../../../common/hooks/useAppSelector"
-import { selectTodoLists } from "../../model/todolists-selectors"
-import { selectAppStatus } from "../../model/app-selectors"
+import { selectTodoLists } from "../../model/todoList-slice"
+import { selectAppStatus } from "../../model/app-slice"
 
 export const TodoLists = () => {
   const todoLists = useAppSelector(selectTodoLists)
