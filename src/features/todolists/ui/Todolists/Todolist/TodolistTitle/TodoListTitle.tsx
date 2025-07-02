@@ -15,11 +15,11 @@ export const TodoListTitle = ({ todoList }: TodoListTitlePropsType) => {
   const dispatch = useAppDispatch()
 
   const changeTodoListTitleHandler = (title: string) => {
-    dispatch(changeTodoListTC(id, title))
+    dispatch(changeTodoListTC({ todolistId: id, title }))
   }
 
   const removeTodoListHandler = () => {
-    dispatch(removeTodoListTC(id))
+    dispatch(removeTodoListTC({ id }))
   }
 
   return (

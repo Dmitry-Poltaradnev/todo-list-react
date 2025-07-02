@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import Grid from "@mui/material/Grid"
-import { addTodoListTC, getTodosTC } from "../features/todolists/model/todoList-slice"
+import { addTodoListTC, fetchTodoLists } from "../features/todolists/model/todoList-slice"
 import { useAppDispatch } from "../common/hooks/useAppDispatch"
 import { TodoLists } from "../features/todolists/ui/Todolists/TodoLists"
 import { AddItemForm } from "../common/components/AddItemForm/AddItemForm"
@@ -11,11 +11,11 @@ export const Main = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    dispatch(getTodosTC())
+    dispatch(fetchTodoLists())
   }, [dispatch])
 
   const addTodListHandler = (title: string) => {
-    dispatch(addTodoListTC(title))
+    dispatch(addTodoListTC({ title }))
   }
 
   return (

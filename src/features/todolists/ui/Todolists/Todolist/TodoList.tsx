@@ -17,7 +17,7 @@ export const Todolist = memo(({ todoList }: TodoListPropsType) => {
   const todolistId = todoList.id
 
   const addTaskHandler = (title: string) => {
-    dispatch(addTaskTC(todolistId, title))
+    dispatch(addTaskTC({ todolistId, title }))
   }
 
   return (
