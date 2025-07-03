@@ -1,10 +1,11 @@
 import { changeTodoListEntityStatusAC } from "./todoList-slice"
 import { taskApi } from "../api/task-api"
-import { changeStatusAppAC, ResultCode, setAppErrorAC } from "./app-slice"
-import { handleAppError, handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
+import { changeStatusAppAC, ResultCode } from "./app-slice"
+import { handleServerAppError } from "../../../common/utils/utils"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { TaskType, UpdateTaskModelType } from "../api/tasksApi.types"
-import { BaseResponse, RequestStatus } from "../../../common/types/types"
+import { RequestStatus } from "../../../common/types/types"
+import { AppRootStateType } from "../../../app/store"
 
 // const initialTasksState = {
 //     [todolistID1]: [
@@ -103,6 +104,12 @@ import { BaseResponse, RequestStatus } from "../../../common/types/types"
 //     return {type: 'UPDATE-TASK-TITLE', payload: {todolistId, taskId, title}} as const
 // }
 
+export type UpdateTaskArgType = {
+  todolistId: string
+  taskId: string
+  domainModel: Partial<UpdateTaskModelType>
+}
+
 type InitialTasksStateType = {
   [key: string]: TaskType[]
 }
@@ -156,27 +163,25 @@ export const tasksSlice = createSlice({
       state[action.payload.todolistId] = action.payload.tasks
     })
     builder.addCase(addTaskTC.fulfilled, (state, action) => {
-      console.log(action.payload)
+      state[action.payload.todolistId].unshift(action.payload.task)
     })
-    // builder
-    // .addCase(addTodoListAC, (state, action) => {
-    //   state[action.payload.id] = []
-    // })
-    // .addCase(removeTodoListAC, (state, action) => {
-    //   delete state[action.payload.id]
-    // })
+    builder.addCase(removeTaskTC.fulfilled, (state, action) => {
+      const taskIndex = state[action.payload.todolistId].findIndex((item) => item.id === action.payload.taskId)
+      if (taskIndex !== -1) state[action.payload.todolistId].splice(taskIndex, 1)
+    })
+    builder.addCase(updateTaskTC.fulfilled, (state, action) => {
+      const { task, taskId, todolistId } = action.payload
+      const index = state[todolistId].findIndex((item) => item.id === taskId)
+      if (index !== -1) state[todolistId][index] = task
+    })
   },
   selectors: {
     selectTasks: (state) => state,
   },
 })
 
-export const { removeTaskAC, changeTaskStatusAC, updateTaskTitleAC } = tasksSlice.actions
-
 export const tasksReducer = tasksSlice.reducer
 export const { selectTasks } = tasksSlice.selectors
-
-// ==================Thunks
 
 export const fetchTasksTC = createAsyncThunk<
   { tasks: TaskType[]; todolistId: string },
@@ -191,23 +196,6 @@ export const fetchTasksTC = createAsyncThunk<
   }
 })
 
-// export const addTaskTC = (todolistId: string, title: string) => (dispatch: any) => {
-//   dispatch(changeStatusAppAC(RequestStatus.Loading))
-//   taskApi
-//     .addTask({ todolistId, title })
-//     .then((res) => {
-//       if (res.data.resultCode === ResultCode.Success) {
-//         dispatch(addTaskAC(res.data.data.item))
-//         dispatch(changeStatusAppAC(RequestStatus.Success))
-//       } else {
-//         handleServerAppError(dispatch, res.data)
-//       }
-//     })
-//     .catch((err) => {
-//       handleServerNetworkError(dispatch, err)
-//     })
-// }
-
 export const addTaskTC = createAsyncThunk<
   { task: TaskType; todolistId: string },
   {
@@ -219,72 +207,77 @@ export const addTaskTC = createAsyncThunk<
   dispatch(changeStatusAppAC(RequestStatus.Loading))
   try {
     const res = await taskApi.addTask({ todolistId, title })
-    debugger
-    dispatch(changeStatusAppAC(RequestStatus.Success))
-    return { task: res.data.data.item, todolistId }
-    // if (res.data.resultCode === ResultCode.Success) {
-    //    dispatch(addTaskAC(res.data.data.item))
-    //    dispatch(changeStatusAppAC(RequestStatus.Success))
-    //  } else {
-    //    handleServerAppError(dispatch, res.data)
-    //  }
+    if (res.data.resultCode === ResultCode.Success) {
+      dispatch(changeStatusAppAC(RequestStatus.Success))
+      return { task: res.data.data.item, todolistId }
+    } else {
+      handleServerAppError(dispatch, res.data)
+      return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
+    }
   } catch (err) {
     return rejectWithValue((err as Error).message || "Unknown error")
   }
 })
 
-export const removeTaskTC = (todolistId: string, taskId: string) => (dispatch: any) => {
-  dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "loading" }))
-  taskApi
-    .removeTask({ todolistId, taskId })
-    .then((res) => {
-      if (res.data.resultCode === ResultCode.Success) {
-        dispatch(removeTaskAC({ todolistId, taskId }))
-        dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "idle" }))
-      } else {
-        handleServerAppError(dispatch, res.data)
-      }
-    })
-    .catch((err) => {
-      handleAppError(dispatch, todolistId, err)
-    })
-}
+export const removeTaskTC = createAsyncThunk<
+  { todolistId: string; taskId: string },
+  {
+    todolistId: string
+    taskId: string
+  },
+  { rejectValue: string }
+>(`${tasksSlice.name}/removeTaskTC`, async ({ todolistId, taskId }, { dispatch, rejectWithValue }) => {
+  dispatch(changeStatusAppAC(RequestStatus.Loading))
+  try {
+    const res = await taskApi.removeTask({ todolistId, taskId })
+    if (res.data.resultCode === ResultCode.Success) {
+      dispatch(changeStatusAppAC(RequestStatus.Success))
+      return { todolistId, taskId }
+    } else {
+      handleServerAppError(dispatch, res.data)
+      return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
+    }
+  } catch (err) {
+    return rejectWithValue((err as Error).message || "Unknown error")
+  }
+})
 
-export const updateTaskTC =
-  (todolistId: string, taskId: string, domainModel: Partial<UpdateTaskModelType>) => (dispatch: any, getState: any) => {
-    // Сделал унифицированную Thunk для обновления task т.к и при обновлении статуса и при обновлении title перезаписывется вся task на бэк
-    // поэтому с помощью Partial мы получаем из Thunk определенные поля для определённого типизированного объекта, после этого
-    // создаем новый объект task и put его на бэк
+export const updateTaskTC = createAsyncThunk<
+  { taskId: string; todolistId: string; task: TaskType },
+  UpdateTaskArgType,
+  { state: AppRootStateType; rejectValue: string }
+>(
+  `${tasksSlice.name}/updateTaskTC`,
+  async ({ todolistId, taskId, domainModel }, { getState, dispatch, rejectWithValue }) => {
     const state = getState()
-    const task: TaskType = state.tasks[todolistId].find((el: TaskType) => el.id === taskId)
+    const task = state.tasks[todolistId]?.find((t) => t.id === taskId)
 
-    if (!task) return
+    if (!task) return rejectWithValue("Task not found")
 
-    const model: UpdateTaskModelType = {
+    const apiModel: UpdateTaskModelType = {
       title: task.title,
       description: task.description,
       priority: task.priority,
-      startDate: task.startDate ?? null,
-      deadline: task.deadline ?? null,
+      startDate: task.startDate,
+      deadline: task.deadline,
       status: task.status,
       ...domainModel,
     }
+
     dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "loading" }))
-    taskApi
-      .updateTask({ todolistId, taskId, model })
-      .then((res) => {
-        if (res.data.resultCode === ResultCode.Success) {
-          if (domainModel.status !== undefined) {
-            dispatch(changeTaskStatusAC({ todolistId, taskId, newStatus: domainModel.status }))
-          }
-          if (domainModel.title !== undefined) {
-            dispatch(updateTaskTitleAC({ todolistId, taskId, title: domainModel.title }))
-          }
-        }
+    try {
+      const res = await taskApi.updateTask({ todolistId, taskId, model: apiModel })
+      if (res.data.resultCode === ResultCode.Success) {
+        dispatch(changeStatusAppAC(RequestStatus.Success))
         dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "idle" }))
-      })
-      .catch((err) => {
-        dispatch(setAppErrorAC(err.message))
-        dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "idle" }))
-      })
-  }
+        return { taskId, todolistId, task: res.data.data.item }
+      } else {
+        handleServerAppError(dispatch, res.data)
+        return rejectWithValue(res.data.messages[0] || "Update failed")
+      }
+    } catch (err) {
+      dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: "idle" }))
+      return rejectWithValue((err as Error).message)
+    }
+  },
+)

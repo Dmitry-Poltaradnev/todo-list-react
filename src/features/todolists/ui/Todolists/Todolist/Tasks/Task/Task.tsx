@@ -18,16 +18,16 @@ export const Task = memo(({ todoListId, task, entityStatus }: TaskPropsType) => 
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
-    dispatch(removeTaskTC(todoListId, task.id))
+    dispatch(removeTaskTC({ todolistId: todoListId, taskId: task.id }))
   }
 
   const changeTaskTitleHandler = (newTitle: string) => {
-    dispatch(updateTaskTC(todoListId, task.id, { title: newTitle }))
+    dispatch(updateTaskTC({ todolistId: todoListId, taskId: task.id, domainModel: { title: newTitle } }))
   }
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const newStatus = e.target.checked ? TaskStatus.Complete : TaskStatus.New
-    dispatch(updateTaskTC(todoListId, task.id, { status: newStatus }))
+    dispatch(updateTaskTC({ todolistId: todoListId, taskId: task.id, domainModel: { status: newStatus } }))
   }
 
   return (
