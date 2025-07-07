@@ -2,10 +2,10 @@ import s from "./TodoList.module.css"
 import React, { memo } from "react"
 import { AddItemForm } from "../../../../../common/components/AddItemForm/AddItemForm"
 import { TodoListDomainType } from "../../../model/todoList-slice"
-import { addTaskTC } from "../../../model/task-slice"
 import { useAppDispatch } from "../../../../../common/hooks/useAppDispatch"
 import { Tasks } from "./Tasks/Tasks"
 import { TodoListTitle } from "./TodolistTitle/TodoListTitle"
+import { addTaskTC } from "../../../model/task-slice"
 
 type TodoListPropsType = {
   todoList: TodoListDomainType

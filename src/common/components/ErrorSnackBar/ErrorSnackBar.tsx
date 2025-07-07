@@ -2,9 +2,9 @@ import * as React from "react"
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar"
 import Alert from "@mui/material/Alert"
 import { useSelector } from "react-redux"
-import { AppRootStateType } from "../../../app/store"
 import { changeStatusAppAC, setAppErrorAC } from "../../../features/todolists/model/app-slice"
 import { useAppDispatch } from "../../hooks/useAppDispatch"
+import { AppRootStateType } from "../../types/types"
 
 export const ErrorSnackBar = () => {
   const error = useSelector<AppRootStateType, string | null>((state) => state.app.error)

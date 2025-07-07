@@ -1,10 +1,10 @@
 import { todoListApi } from "../api/todolist-api"
 import { changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleServerAppError } from "../../../common/utils/utils"
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { TodoListType } from "../api/todolistsApi.types"
 import { RequestStatus } from "../../../common/types/types"
 import { fetchTasksTC } from "./task-slice"
+import { createAppSlice } from "../../../common/utils/createAppSlice"
 
 // type TodoListReducerType =
 //     RemoveTodoListActionType
@@ -67,7 +67,7 @@ export type TodoListDomainType = TodoListType & {
   entityStatus: RequestStatusType
 }
 
-export const todoListSlice = createSlice({
+export const todoListSlice = createAppSlice({
   name: "todolists",
   initialState: [] as TodoListDomainType[],
   reducers: (create) => ({
@@ -76,26 +76,99 @@ export const todoListSlice = createSlice({
       const todo = state.find((item) => item.id === id)
       if (todo) todo.entityStatus = entityStatus
     }),
+    fetchTodoListsTC: create.asyncThunk<TodoListDomainType[], void, { rejectValue: string }>(
+      async (_arg, { dispatch, rejectWithValue }) => {
+        try {
+          const res = await todoListApi.getTodoLists()
+          const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({
+            ...todoList,
+            entityStatus: "idle",
+          }))
+          domainTodoLists.forEach((item) => dispatch(fetchTasksTC({ todolistId: item.id })))
+          dispatch(changeStatusAppAC(RequestStatus.Success))
+          return domainTodoLists
+        } catch (err) {
+          return rejectWithValue((err as Error).message || "Unknown error")
+        }
+      },
+      {
+        fulfilled: (_state, action) => action.payload ?? [],
+      },
+    ),
+    addTodoListTC: create.asyncThunk<TodoListType, { title: string }, { rejectValue: string }>(
+      async ({ title }, { dispatch, rejectWithValue }) => {
+        dispatch(changeStatusAppAC(RequestStatus.Loading))
+        try {
+          const res = await todoListApi.addTodoList(title)
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(changeStatusAppAC(RequestStatus.Success))
+            return res.data.data.item
+          } else {
+            handleServerAppError(dispatch, res.data)
+            return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
+          }
+        } catch (err) {
+          return rejectWithValue((err as Error).message)
+        }
+      },
+      {
+        fulfilled: (state, action) => {
+          state.unshift({
+            ...action.payload,
+            entityStatus: "idle",
+          })
+        },
+      },
+    ),
+    removeTodoListTC: create.asyncThunk<{ id: string }, { id: string }, { rejectValue: string }>(
+      async ({ id }, { dispatch, rejectWithValue }) => {
+        dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "loading" }))
+        try {
+          const res = await todoListApi.removeTodoList(id)
+          if (res.data.resultCode === ResultCode.Success) {
+            dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "succeeded" }))
+            return { id }
+          } else {
+            handleServerAppError(dispatch, res.data)
+            return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
+          }
+        } catch (err) {
+          return rejectWithValue((err as Error).message)
+        }
+      },
+      {
+        fulfilled: (state, action) => {
+          const index = state.findIndex((item) => item.id === action.payload.id)
+          if (index !== -1) state.splice(index, 1)
+        },
+      },
+    ),
+    changeTodoListTC: create.asyncThunk<
+      { todolistId: string; title: string },
+      { todolistId: string; title: string },
+      { rejectValue: string }
+    >(
+      async ({ todolistId, title }, { dispatch, rejectWithValue }) => {
+        try {
+          const res = await todoListApi.updateTodoList({ todolistId, title })
+          if (res.data.resultCode === ResultCode.Success) {
+            return { todolistId, title }
+          } else {
+            dispatch(setAppErrorAC(res.data.messages[0] || "Unknown error occurred"))
+            return rejectWithValue(res.data.messages[0] || "Unknown error occurred")
+          }
+        } catch (err) {
+          return rejectWithValue((err as Error).message)
+        }
+      },
+      {
+        fulfilled: (state, action) => {
+          const index = state.findIndex((item) => item.id === action.payload.todolistId)
+          if (index !== -1) state[index].title = action.payload.title
+        },
+      },
+    ),
   }),
-  extraReducers: (builder) => {
-    builder.addCase(fetchTodoLists.fulfilled, (_state, action) => {
-      return action.payload ?? []
-    })
-    builder.addCase(addTodoListTC.fulfilled, (state, action) => {
-      state.unshift({
-        ...action.payload,
-        entityStatus: "idle",
-      })
-    })
-    builder.addCase(removeTodoListTC.fulfilled, (state, action) => {
-      const index = state.findIndex((item) => item.id === action.payload.id)
-      if (index !== -1) state.splice(index, 1)
-    })
-    builder.addCase(changeTodoListTC.fulfilled, (state, action) => {
-      const index = state.findIndex((item) => item.id === action.payload.todolistId)
-      if (index !== -1) state[index].title = action.payload.title
-    })
-  },
   selectors: {
     selectTodoLists: (state) => state,
   },
@@ -104,77 +177,5 @@ export const todoListSlice = createSlice({
 export const todoListReducer = todoListSlice.reducer
 export const { selectTodoLists } = todoListSlice.selectors
 
-export const { changeTodoListEntityStatusAC } = todoListSlice.actions
-
-// ==================Thunks============
-export const fetchTodoLists = createAsyncThunk<TodoListDomainType[], void, { rejectValue: string }>(
-  `${todoListSlice.name}/fetchTodoLists`,
-  async (_arg, { dispatch, rejectWithValue }) => {
-    dispatch(changeStatusAppAC(RequestStatus.Loading))
-    try {
-      const res = await todoListApi.getTodoLists()
-      const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({ ...todoList, entityStatus: "idle" }))
-      domainTodoLists.forEach((item) => dispatch(fetchTasksTC({ todolistId: item.id })))
-      dispatch(changeStatusAppAC(RequestStatus.Success))
-      return domainTodoLists
-    } catch (err) {
-      return rejectWithValue((err as Error).message || "Unknown error")
-    }
-  },
-)
-
-export const addTodoListTC = createAsyncThunk<TodoListType, { title: string }, { rejectValue: string }>(
-  `${todoListSlice.name}/addTodoListTC`,
-  async ({ title }, { dispatch, rejectWithValue }) => {
-    dispatch(changeStatusAppAC(RequestStatus.Loading))
-    try {
-      const res = await todoListApi.addTodoList(title)
-      if (res.data.resultCode === ResultCode.Success) {
-        dispatch(changeStatusAppAC(RequestStatus.Success))
-        return res.data.data.item
-      } else {
-        handleServerAppError(dispatch, res.data)
-        return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
-      }
-    } catch (err) {
-      return rejectWithValue((err as Error).message)
-    }
-  },
-)
-
-export const removeTodoListTC = createAsyncThunk<{ id: string }, { id: string }, { rejectValue: string }>(
-  `${todoListSlice.name}/removeTodoListTC`,
-  async ({ id }, { dispatch, rejectWithValue }) => {
-    dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "loading" }))
-    try {
-      const res = await todoListApi.removeTodoList(id)
-      if (res.data.resultCode === ResultCode.Success) {
-        dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "succeeded" }))
-        return { id }
-      } else {
-        handleServerAppError(dispatch, res.data)
-        return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
-      }
-    } catch (err) {
-      return rejectWithValue((err as Error).message)
-    }
-  },
-)
-
-export const changeTodoListTC = createAsyncThunk<
-  { todolistId: string; title: string },
-  { todolistId: string; title: string },
-  { rejectValue: string }
->(`${todoListSlice.name}/changeTodoListTC`, async ({ todolistId, title }, { dispatch, rejectWithValue }) => {
-  try {
-    const res = await todoListApi.updateTodoList({ todolistId, title })
-    if (res.data.resultCode === ResultCode.Success) {
-      return { todolistId, title }
-    } else {
-      dispatch(setAppErrorAC(res.data.messages[0] || "Unknown error occurred"))
-      return rejectWithValue(res.data.messages[0] || "Unknown error occurred")
-    }
-  } catch (err) {
-    return rejectWithValue((err as Error).message)
-  }
-})
+export const { changeTodoListEntityStatusAC, fetchTodoListsTC, addTodoListTC, removeTodoListTC, changeTodoListTC } =
+  todoListSlice.actions
