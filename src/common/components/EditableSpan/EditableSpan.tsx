@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useState } from "react"
 import TextField from "@mui/material/TextField"
-import { RequestStatusType } from "../../../features/todolists/model/app-slice"
+import { RequestStatus } from "../../../features/todolists/model/app-slice"
 
 type EditableSpanPropsType = {
   changeTitleHandler: (newTitle: string) => void
   oldTitle: string
-  entityStatus: RequestStatusType
+  entityStatus: RequestStatus
 }
 
 export const EditableSpan = ({ oldTitle, changeTitleHandler, entityStatus }: EditableSpanPropsType) => {

@@ -2,7 +2,7 @@ import * as React from "react"
 import Snackbar, { SnackbarCloseReason } from "@mui/material/Snackbar"
 import Alert from "@mui/material/Alert"
 import { useSelector } from "react-redux"
-import { changeStatusAppAC, setAppErrorAC } from "../../../features/todolists/model/app-slice"
+import { changeStatusAppAC, RequestStatus, setAppErrorAC } from "../../../features/todolists/model/app-slice"
 import { useAppDispatch } from "../../hooks/useAppDispatch"
 import { AppRootStateType } from "../../types/types"
 
@@ -17,7 +17,7 @@ export const ErrorSnackBar = () => {
       return
     }
     dispatch(setAppErrorAC(null))
-    dispatch(changeStatusAppAC("succeeded"))
+    dispatch(changeStatusAppAC(RequestStatus.Succeeded))
   }
 
   return (

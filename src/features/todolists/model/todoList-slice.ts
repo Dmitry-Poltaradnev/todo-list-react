@@ -1,8 +1,7 @@
 import { todoListApi } from "../api/todolist-api"
-import { changeStatusAppAC, RequestStatusType, ResultCode, setAppErrorAC } from "./app-slice"
+import { changeStatusAppAC, RequestStatus, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleServerAppError } from "../../../common/utils/utils"
 import { TodoListType } from "../api/todolistsApi.types"
-import { RequestStatus } from "../../../common/types/types"
 import { fetchTasksTC } from "./task-slice"
 import { createAppSlice } from "../../../common/utils/createAppSlice"
 
@@ -64,14 +63,14 @@ import { createAppSlice } from "../../../common/utils/createAppSlice"
 // }
 
 export type TodoListDomainType = TodoListType & {
-  entityStatus: RequestStatusType
+  entityStatus: RequestStatus
 }
 
 export const todoListSlice = createAppSlice({
   name: "todolists",
   initialState: [] as TodoListDomainType[],
   reducers: (create) => ({
-    changeTodoListEntityStatusAC: create.reducer<{ id: string; entityStatus: RequestStatusType }>((state, action) => {
+    changeTodoListEntityStatusAC: create.reducer<{ id: string; entityStatus: RequestStatus }>((state, action) => {
       const { id, entityStatus } = action.payload
       const todo = state.find((item) => item.id === id)
       if (todo) todo.entityStatus = entityStatus
@@ -79,16 +78,19 @@ export const todoListSlice = createAppSlice({
     fetchTodoListsTC: create.asyncThunk<TodoListDomainType[], void, { rejectValue: string }>(
       async (_arg, { dispatch, rejectWithValue }) => {
         try {
+          dispatch(changeStatusAppAC(RequestStatus.Loading))
           const res = await todoListApi.getTodoLists()
           const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({
             ...todoList,
-            entityStatus: "idle",
+            entityStatus: RequestStatus.Idle,
           }))
           domainTodoLists.forEach((item) => dispatch(fetchTasksTC({ todolistId: item.id })))
-          dispatch(changeStatusAppAC(RequestStatus.Success))
+          dispatch(changeStatusAppAC(RequestStatus.Succeeded))
           return domainTodoLists
         } catch (err) {
           return rejectWithValue((err as Error).message || "Unknown error")
+        } finally {
+          dispatch(changeStatusAppAC(RequestStatus.Idle))
         }
       },
       {
@@ -97,11 +99,11 @@ export const todoListSlice = createAppSlice({
     ),
     addTodoListTC: create.asyncThunk<TodoListType, { title: string }, { rejectValue: string }>(
       async ({ title }, { dispatch, rejectWithValue }) => {
-        dispatch(changeStatusAppAC(RequestStatus.Loading))
         try {
+          dispatch(changeStatusAppAC(RequestStatus.Loading))
           const res = await todoListApi.addTodoList(title)
           if (res.data.resultCode === ResultCode.Success) {
-            dispatch(changeStatusAppAC(RequestStatus.Success))
+            dispatch(changeStatusAppAC(RequestStatus.Succeeded))
             return res.data.data.item
           } else {
             handleServerAppError(dispatch, res.data)
@@ -109,24 +111,26 @@ export const todoListSlice = createAppSlice({
           }
         } catch (err) {
           return rejectWithValue((err as Error).message)
+        } finally {
+          dispatch(changeStatusAppAC(RequestStatus.Idle))
         }
       },
       {
         fulfilled: (state, action) => {
           state.unshift({
             ...action.payload,
-            entityStatus: "idle",
+            entityStatus: RequestStatus.Idle,
           })
         },
       },
     ),
     removeTodoListTC: create.asyncThunk<{ id: string }, { id: string }, { rejectValue: string }>(
       async ({ id }, { dispatch, rejectWithValue }) => {
-        dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "loading" }))
         try {
+          dispatch(changeTodoListEntityStatusAC({ id, entityStatus: RequestStatus.Loading }))
           const res = await todoListApi.removeTodoList(id)
           if (res.data.resultCode === ResultCode.Success) {
-            dispatch(changeTodoListEntityStatusAC({ id, entityStatus: "succeeded" }))
+            dispatch(changeTodoListEntityStatusAC({ id, entityStatus: RequestStatus.Succeeded }))
             return { id }
           } else {
             handleServerAppError(dispatch, res.data)
@@ -134,6 +138,8 @@ export const todoListSlice = createAppSlice({
           }
         } catch (err) {
           return rejectWithValue((err as Error).message)
+        } finally {
+          dispatch(changeTodoListEntityStatusAC({ id, entityStatus: RequestStatus.Idle }))
         }
       },
       {

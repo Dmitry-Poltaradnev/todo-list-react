@@ -4,7 +4,8 @@
 // 3) но нужно смотреть файл useAppSelector
 
 import { AppRootStateType } from "../../../common/types/types"
+import { RequestStatus } from "./app-slice"
 
 export const selectEntityStatusById = (todoListId: string) => (state: AppRootStateType) => {
-  return state.todolists.find((item: any) => item.id === todoListId)?.entityStatus ?? "idle"
+  return state.todolists.find((item: any) => item.id === todoListId)?.entityStatus ?? RequestStatus.Idle
 }

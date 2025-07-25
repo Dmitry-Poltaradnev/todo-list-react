@@ -7,10 +7,5 @@ export type BaseResponse<T = {}> = {
   fieldsErrors: string[]
 }
 
-export enum RequestStatus {
-  Loading = "loading",
-  Success = "succeeded",
-}
-
 export type AppRootStateType = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch

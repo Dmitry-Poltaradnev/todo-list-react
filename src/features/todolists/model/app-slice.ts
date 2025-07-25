@@ -11,12 +11,17 @@ export enum ResultCode {
   Captcha = 10,
 }
 
-export type RequestStatusType = "idle" | "loading" | "succeeded" | "failed"
+export enum RequestStatus {
+  Idle = "idle",
+  Loading = "loading",
+  Succeeded = "succeeded",
+  Failed = "failed",
+}
 
 export const appSlice = createSlice({
   name: "app",
   initialState: {
-    appStatus: "idle" as RequestStatusType,
+    appStatus: RequestStatus.Idle,
     theme: ThemeType.White,
     error: null as string | null,
   },
@@ -25,7 +30,7 @@ export const appSlice = createSlice({
       toggleThemeAC: create.reducer((state) => {
         state.theme = state.theme === ThemeType.White ? ThemeType.Dark : ThemeType.White
       }),
-      changeStatusAppAC: create.reducer<RequestStatusType>((state, action) => {
+      changeStatusAppAC: create.reducer<RequestStatus>((state, action) => {
         state.appStatus = action.payload
       }),
       setAppErrorAC: create.reducer<string | null>((state, action) => {
