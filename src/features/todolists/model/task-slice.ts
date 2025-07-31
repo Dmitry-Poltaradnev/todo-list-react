@@ -1,7 +1,7 @@
 import { createAppSlice } from "../../../common/utils/createAppSlice"
-import { changeStatusAppAC, RequestStatus, ResultCode } from "./app-slice"
+import { RequestStatus, ResultCode } from "./app-slice"
 import { taskApi } from "../api/task-api"
-import { handleServerAppError } from "../../../common/utils/utils"
+import { handleNetworkError, handleServerError } from "../../../common/utils/utils"
 import { TaskType, UpdateTaskModelType } from "../api/tasksApi.types"
 import { addTodoListTC, changeTodoListEntityStatusAC, removeTodoListTC } from "./todoList-slice"
 import { AppRootStateType } from "../../../common/types/types"
@@ -25,11 +25,12 @@ export const tasksSlice = createAppSlice({
       { todolistId: string }, // Для запроса на API  , принимаем из компоненты
       { rejectValue: string }
     >(
-      async ({ todolistId }, { rejectWithValue }) => {
+      async ({ todolistId }, { dispatch, rejectWithValue }) => {
         try {
           const res = await taskApi.getTasks(todolistId)
           return { todolistId, tasks: res.data.items }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message || "Unknown error")
         }
       },
@@ -50,10 +51,11 @@ export const tasksSlice = createAppSlice({
           if (res.data.resultCode === ResultCode.Success) {
             return { task: res.data.data.item, todolistId }
           } else {
-            handleServerAppError(dispatch, res.data)
+            handleServerError(dispatch, res.data)
             return rejectWithValue(res.data.messages[0] || "Failed to add task")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message || "Unknown error")
         }
       },
@@ -77,10 +79,10 @@ export const tasksSlice = createAppSlice({
             dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: RequestStatus.Succeeded }))
             return { todolistId, taskId }
           } else {
-            handleServerAppError(dispatch, res.data)
             return rejectWithValue(res.data.messages[0] || "Failed to remove task")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message || "Unknown error")
         } finally {
           dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: RequestStatus.Idle }))
@@ -117,10 +119,11 @@ export const tasksSlice = createAppSlice({
             dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: RequestStatus.Succeeded }))
             return { task: res.data.data.item }
           } else {
-            handleServerAppError(dispatch, res.data)
+            handleServerError(dispatch, res.data)
             return rejectWithValue(res.data.messages[0] || "Update failed")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message || "Unknown error")
         } finally {
           dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: RequestStatus.Idle }))

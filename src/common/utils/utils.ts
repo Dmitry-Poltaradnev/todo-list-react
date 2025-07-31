@@ -1,17 +1,21 @@
 import { Dispatch } from "redux"
-import { changeStatusAppAC, RequestStatus, setAppErrorAC } from "../../features/todolists/model/app-slice"
-import { changeTodoListEntityStatusAC } from "../../features/todolists/model/todoList-slice"
+import { setAppErrorAC } from "../../features/todolists/model/app-slice"
 import { BaseResponse } from "../types/types"
+import axios from "axios"
 
-export const handleServerNetworkError = (dispatch: Dispatch, err: { message: string }) => {
-  dispatch(setAppErrorAC(err.message))
-  dispatch(changeStatusAppAC(RequestStatus.Failed))
+export const handleNetworkError = (dispatch: Dispatch, err: unknown) => {
+  if (axios.isAxiosError(err)) {
+    dispatch(setAppErrorAC(err.message))
+  } else if (err instanceof Error) {
+    dispatch(setAppErrorAC(err.message))
+  }
 }
-export const handleServerAppError = (dispatch: Dispatch, data: BaseResponse) => {
+
+export const handleAppError = <T>(dispatch: Dispatch, data: BaseResponse<T>) => {
+  const error = data?.messages[0] || "Unknown error occurred"
+  dispatch(setAppErrorAC(error))
+}
+
+export const handleServerError = (dispatch: Dispatch, data: BaseResponse) => {
   dispatch(setAppErrorAC(data.messages[0] || "Unknown error occurred"))
-  dispatch(changeStatusAppAC(RequestStatus.Failed))
-}
-export const handleAppError = (dispatch: Dispatch, todolistId: string, err: { message: string }) => {
-  dispatch(setAppErrorAC(err.message))
-  dispatch(changeTodoListEntityStatusAC({ id: todolistId, entityStatus: RequestStatus.Failed }))
 }

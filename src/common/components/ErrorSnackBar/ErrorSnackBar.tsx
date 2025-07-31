@@ -9,7 +9,6 @@ import { AppRootStateType } from "../../types/types"
 export const ErrorSnackBar = () => {
   const error = useSelector<AppRootStateType, string | null>((state) => state.app.error)
 
-  // const [open, setOpen] = useState(true);
   const dispatch = useAppDispatch()
 
   const handleClose = (event?: React.SyntheticEvent | Event, reason?: SnackbarCloseReason) => {
@@ -17,7 +16,6 @@ export const ErrorSnackBar = () => {
       return
     }
     dispatch(setAppErrorAC(null))
-    dispatch(changeStatusAppAC(RequestStatus.Succeeded))
   }
 
   return (

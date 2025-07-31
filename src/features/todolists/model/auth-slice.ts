@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { Dispatch } from "redux"
 import { authApi } from "../api/auth-api"
 import { ResultCode } from "./app-slice"
-import { handleServerAppError, handleServerNetworkError } from "../../../common/utils/utils"
+import { handleServerError, handleNetworkError } from "../../../common/utils/utils"
 import { Path } from "../../../common/routing/Routing"
 import { LoginFormType } from "../../../common/components/Login/Login"
 
@@ -33,10 +33,10 @@ export const loginTC = (data: LoginFormType, navigate: any) => (dispatch: Dispat
         dispatch(setIsLoggedAC(true))
         navigate(Path.Main)
       } else {
-        handleServerAppError(dispatch, res.data)
+        handleServerError(dispatch, res.data)
       }
     })
     .catch((err: Error) => {
-      handleServerNetworkError(dispatch, err)
+      handleNetworkError(dispatch, err)
     })
 }

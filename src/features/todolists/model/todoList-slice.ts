@@ -1,6 +1,6 @@
 import { todoListApi } from "../api/todolist-api"
 import { changeStatusAppAC, RequestStatus, ResultCode, setAppErrorAC } from "./app-slice"
-import { handleServerAppError } from "../../../common/utils/utils"
+import { handleAppError, handleNetworkError } from "../../../common/utils/utils"
 import { TodoListType } from "../api/todolistsApi.types"
 import { fetchTasksTC } from "./task-slice"
 import { createAppSlice } from "../../../common/utils/createAppSlice"
@@ -88,6 +88,7 @@ export const todoListSlice = createAppSlice({
           dispatch(changeStatusAppAC(RequestStatus.Succeeded))
           return domainTodoLists
         } catch (err) {
+          dispatch(setAppErrorAC((err as Error).message))
           return rejectWithValue((err as Error).message || "Unknown error")
         } finally {
           dispatch(changeStatusAppAC(RequestStatus.Idle))
@@ -106,10 +107,11 @@ export const todoListSlice = createAppSlice({
             dispatch(changeStatusAppAC(RequestStatus.Succeeded))
             return res.data.data.item
           } else {
-            handleServerAppError(dispatch, res.data)
+            handleAppError(dispatch, res.data)
             return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message)
         } finally {
           dispatch(changeStatusAppAC(RequestStatus.Idle))
@@ -133,10 +135,10 @@ export const todoListSlice = createAppSlice({
             dispatch(changeTodoListEntityStatusAC({ id, entityStatus: RequestStatus.Succeeded }))
             return { id }
           } else {
-            handleServerAppError(dispatch, res.data)
-            return rejectWithValue(res.data.messages[0] || "Failed to add todo list")
+            return rejectWithValue(res.data.messages[0] || "Failed to remove todo list")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message)
         } finally {
           dispatch(changeTodoListEntityStatusAC({ id, entityStatus: RequestStatus.Idle }))
@@ -160,10 +162,10 @@ export const todoListSlice = createAppSlice({
           if (res.data.resultCode === ResultCode.Success) {
             return { todolistId, title }
           } else {
-            dispatch(setAppErrorAC(res.data.messages[0] || "Unknown error occurred"))
             return rejectWithValue(res.data.messages[0] || "Unknown error occurred")
           }
         } catch (err) {
+          handleNetworkError(dispatch, err as Error)
           return rejectWithValue((err as Error).message)
         }
       },
