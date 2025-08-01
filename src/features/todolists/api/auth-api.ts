@@ -1,4 +1,4 @@
-import { LoginFormType } from "../../../common/components/Login/Login"
+import { LoginFormType } from "../../auth/ui/Login/Login"
 import { BaseResponse } from "../../../common/types/types"
 import { instance } from "../../../common/instance/instance"
 

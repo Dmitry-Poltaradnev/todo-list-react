@@ -15,7 +15,7 @@ export const PageNotFound = () => {
       <h1 className={styles.title}>404</h1>
       <h2 className={styles.subtitle}>page not found</h2>
       <Button variant="contained" color="primary" onClick={onReturnClick}>
-        Return to main page
+        Return to login page
       </Button>
     </div>
   )

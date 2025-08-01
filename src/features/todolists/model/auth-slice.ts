@@ -4,7 +4,7 @@ import { authApi } from "../api/auth-api"
 import { ResultCode } from "./app-slice"
 import { handleServerError, handleNetworkError } from "../../../common/utils/utils"
 import { Path } from "../../../common/routing/Routing"
-import { LoginFormType } from "../../../common/components/Login/Login"
+import { LoginFormType } from "../../auth/ui/Login/Login"
 
 export const authSlice = createSlice({
   name: "auth",

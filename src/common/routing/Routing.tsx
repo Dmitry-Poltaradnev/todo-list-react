@@ -1,11 +1,11 @@
 import { Route, Routes } from "react-router-dom"
-import { Login } from "../components/Login/Login"
+import { Login } from "../../features/auth/ui/Login/Login"
 import { PageNotFound } from "../components/PageNotFound/PageNotFound"
 import { Main } from "../../app/Main"
 
 export const Path = {
   Main: "/todo-list-react",
-  Login: "/Login",
+  Login: "/login",
   NotFound: "*",
 } as const
 

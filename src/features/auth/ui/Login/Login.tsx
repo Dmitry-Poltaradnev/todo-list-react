@@ -8,9 +8,9 @@ import FormLabel from "@mui/material/FormLabel"
 import TextField from "@mui/material/TextField"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import styles from "./Login.module.css"
-import { loginTC } from "../../../features/todolists/model/auth-slice"
+import { loginTC } from "../../../todolists/model/auth-slice"
 import { useNavigate } from "react-router-dom"
-import { useAppDispatch } from "../../hooks/useAppDispatch"
+import { useAppDispatch } from "../../../../common/hooks/useAppDispatch"
 
 export type LoginFormType = {
   email: string
@@ -19,8 +19,6 @@ export type LoginFormType = {
 }
 
 export const Login = () => {
-  // const themeMode = useAppSelector(selectThemeMode)
-  // const theme = getTheme(themeMode)
   const {
     register,
     handleSubmit,
@@ -33,7 +31,8 @@ export const Login = () => {
 
   const navigate = useNavigate()
 
-  const onSubmit: SubmitHandler<LoginFormType> = (data: any) => {
+  const onSubmit: SubmitHandler<LoginFormType> = (data: LoginFormType) => {
+    console.log(data)
     dispatch(loginTC(data, navigate))
     // reset()
   }
@@ -46,12 +45,7 @@ export const Login = () => {
             <FormLabel>
               <p>
                 To login get registered
-                <a
-                  // style={{ color: theme.palette.primary.main, marginLeft: "5px" }}
-                  href="https://social-network.samuraijs.com"
-                  target="_blank"
-                  rel="noreferrer"
-                >
+                <a href="https://social-network.samuraijs.com" target="_blank" rel="noreferrer">
                   here
                 </a>
               </p>
