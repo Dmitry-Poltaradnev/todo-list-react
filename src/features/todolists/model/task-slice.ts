@@ -2,7 +2,7 @@ import { createAppSlice } from "../../../common/utils/createAppSlice"
 import { RequestStatus, ResultCode } from "./app-slice"
 import { taskApi } from "../api/task-api"
 import { handleNetworkError, handleServerError } from "../../../common/utils/utils"
-import { TaskType, UpdateTaskModelType } from "../api/tasksApi.types"
+import { DomainTask, domainTaskSchema, UpdateTaskModelType } from "../api/tasksApi.types"
 import { addTodoListTC, changeTodoListEntityStatusAC, removeTodoListTC } from "./todoList-slice"
 import { AppRootStateType } from "../../../common/types/types"
 
@@ -13,7 +13,7 @@ export type UpdateTaskArgType = {
 }
 
 type InitialTasksStateType = {
-  [key: string]: TaskType[]
+  [key: string]: DomainTask[]
 }
 
 export const tasksSlice = createAppSlice({
@@ -21,13 +21,14 @@ export const tasksSlice = createAppSlice({
   initialState: {} as InitialTasksStateType,
   reducers: (create) => ({
     fetchTasksTC: create.asyncThunk<
-      { tasks: TaskType[]; todolistId: string }, // Для работы со стэйтом, принимаем из response
+      { tasks: DomainTask[]; todolistId: string }, // Для работы со стэйтом, принимаем из response
       { todolistId: string }, // Для запроса на API  , принимаем из компоненты
       { rejectValue: string }
     >(
       async ({ todolistId }, { dispatch, rejectWithValue }) => {
         try {
           const res = await taskApi.getTasks(todolistId)
+          domainTaskSchema.array().parse(res.data.items)
           return { todolistId, tasks: res.data.items }
         } catch (err) {
           handleNetworkError(dispatch, err as Error)
@@ -41,7 +42,7 @@ export const tasksSlice = createAppSlice({
       },
     ),
     addTaskTC: create.asyncThunk<
-      { task: TaskType; todolistId: string },
+      { task: DomainTask; todolistId: string },
       { todolistId: string; title: string },
       { rejectValue: string }
     >(
@@ -96,7 +97,7 @@ export const tasksSlice = createAppSlice({
         },
       },
     ),
-    updateTaskTC: create.asyncThunk<{ task: TaskType }, UpdateTaskArgType, { rejectValue: string }>(
+    updateTaskTC: create.asyncThunk<{ task: DomainTask }, UpdateTaskArgType, { rejectValue: string }>(
       async ({ todolistId, taskId, domainModel }, { getState, dispatch, rejectWithValue }) => {
         const state = getState() as AppRootStateType
         const task = state.tasks[todolistId]?.find((t: any) => t.id === taskId)

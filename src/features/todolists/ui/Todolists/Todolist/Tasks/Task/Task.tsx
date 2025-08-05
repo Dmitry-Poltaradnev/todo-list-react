@@ -5,11 +5,11 @@ import DeleteIcon from "@mui/icons-material/Delete"
 import { EditableSpan } from "../../../../../../../common/components/EditableSpan/EditableSpan"
 import { Checkbox } from "@mui/material"
 import { useAppDispatch } from "../../../../../../../common/hooks/useAppDispatch"
-import { TaskStatus, TaskType } from "../../../../../api/tasksApi.types"
+import { TaskStatus, DomainTask } from "../../../../../api/tasksApi.types"
 import { RequestStatus } from "../../../../../model/app-slice"
 
 type TaskPropsType = {
-  task: TaskType
+  task: DomainTask
   todoListId: string
   entityStatus: RequestStatus
 }

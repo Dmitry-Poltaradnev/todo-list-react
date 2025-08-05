@@ -1,7 +1,7 @@
 import { todoListApi } from "../api/todolist-api"
 import { changeStatusAppAC, RequestStatus, ResultCode, setAppErrorAC } from "./app-slice"
 import { handleAppError, handleNetworkError } from "../../../common/utils/utils"
-import { TodoListType } from "../api/todolistsApi.types"
+import { TodoListType, todoListTypeSchema } from "../api/todolistsApi.types"
 import { fetchTasksTC } from "./task-slice"
 import { createAppSlice } from "../../../common/utils/createAppSlice"
 
@@ -80,6 +80,7 @@ export const todoListSlice = createAppSlice({
         try {
           dispatch(changeStatusAppAC(RequestStatus.Loading))
           const res = await todoListApi.getTodoLists()
+          todoListTypeSchema.array().parse(res.data)
           const domainTodoLists: TodoListDomainType[] = res.data.map((todoList) => ({
             ...todoList,
             entityStatus: RequestStatus.Idle,

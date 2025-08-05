@@ -6,7 +6,7 @@ import { Task } from "./Task/Task"
 import { useAppSelector } from "../../../../../../common/hooks/useAppSelector"
 import { selectTasksByTodolistId } from "../../../../model/tasks-selectors"
 import { selectEntityStatusById } from "../../../../model/todolists-selectors"
-import { TaskType } from "../../../../api/tasksApi.types"
+import { DomainTask } from "../../../../api/tasksApi.types"
 
 type TasksPropsType = {
   todolistId: string
@@ -25,7 +25,7 @@ export const Tasks = ({ todolistId }: TasksPropsType) => {
 
   const [filter, setFilter] = useState<FilterValues>(FilterValues.All)
 
-  const filterTasks = (filter: FilterValues, tasks: TaskType[]) => {
+  const filterTasks = (filter: FilterValues, tasks: DomainTask[]) => {
     if (filter === FilterValues.Active) {
       return tasks.filter((task) => !task.status)
     }

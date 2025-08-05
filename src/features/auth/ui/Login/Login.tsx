@@ -11,12 +11,16 @@ import styles from "./Login.module.css"
 import { loginTC } from "../../../todolists/model/auth-slice"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../../../../common/hooks/useAppDispatch"
+import z from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 
-export type LoginFormType = {
-  email: string
-  password: string
-  rememberMe: boolean
-}
+const loginScheme = z.object({
+  email: z.email(),
+  password: z.string().min(3),
+  rememberMe: z.boolean().optional(),
+})
+
+export type LoginFormType = z.infer<typeof loginScheme>
 
 export const Login = () => {
   const {
@@ -25,14 +29,16 @@ export const Login = () => {
     reset,
     control,
     formState: { errors },
-  } = useForm<LoginFormType>({ defaultValues: { email: "", password: "", rememberMe: false } })
+  } = useForm<LoginFormType>({
+    defaultValues: { email: "", password: "", rememberMe: false },
+    resolver: zodResolver(loginScheme),
+  })
 
   const dispatch = useAppDispatch()
 
   const navigate = useNavigate()
 
   const onSubmit: SubmitHandler<LoginFormType> = (data: LoginFormType) => {
-    console.log(data)
     dispatch(loginTC(data, navigate))
     // reset()
   }
@@ -58,32 +64,13 @@ export const Login = () => {
               </p>
             </FormLabel>
             <FormGroup>
-              <TextField
-                error={!!errors.email}
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                    message: "Incorrect email address",
-                  },
-                })}
-                label="Email"
-                margin="normal"
-              />
+              <TextField error={!!errors.email} {...register("email")} label="Email" margin="normal" />
               {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
-              <TextField
-                type="password"
-                label="Password"
-                margin="normal"
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password cannot be less than 6 symbols",
-                  },
-                })}
-              />
-              {errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}
+              <TextField type="password" label="Password" margin="normal" {...register("password")} />
+              {/*{errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}*/}
+              {errors.password && (
+                <span className={styles.errorMessage}>{"Password must be at least 3 characters long"}</span>
+              )}
               <FormControlLabel
                 label={"Remember me"}
                 control={
