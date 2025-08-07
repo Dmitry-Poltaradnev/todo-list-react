@@ -8,16 +8,20 @@ import FormLabel from "@mui/material/FormLabel"
 import TextField from "@mui/material/TextField"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import styles from "./Login.module.css"
-import { loginTC } from "../../../todolists/model/auth-slice"
+import { loginTC, selectIsLoggedIn } from "../../../todolists/model/auth-slice"
 import { useNavigate } from "react-router-dom"
 import { useAppDispatch } from "../../../../common/hooks/useAppDispatch"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useAppSelector } from "../../../../common/hooks/useAppSelector"
+import { Path } from "../../../../common/routing/Routing"
+import { useEffect } from "react"
 
 const loginScheme = z.object({
   email: z.email(),
   password: z.string().min(3),
   rememberMe: z.boolean().optional(),
+  captcha: z.string().optional(),
 })
 
 export type LoginFormType = z.infer<typeof loginScheme>
@@ -38,8 +42,16 @@ export const Login = () => {
 
   const navigate = useNavigate()
 
+  const isLoggedIn = useAppSelector(selectIsLoggedIn)
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate(Path.Main)
+    }
+  }, [isLoggedIn, navigate])
+
   const onSubmit: SubmitHandler<LoginFormType> = (data: LoginFormType) => {
-    dispatch(loginTC(data, navigate))
+    dispatch(loginTC({ data }))
     // reset()
   }
 
@@ -49,16 +61,7 @@ export const Login = () => {
         <Grid container justifyContent={"center"}>
           <FormControl>
             <FormLabel>
-              <p>
-                To login get registered
-                <a href="https://social-network.samuraijs.com" target="_blank" rel="noreferrer">
-                  here
-                </a>
-              </p>
-              <p>or use common test account credentials:</p>
-              <p>
-                <b>Email:</b> poltaradnev@gmail.com
-              </p>
+              <b>Email:</b> poltaradnev@gmail.com
               <p>
                 <b>Password:</b> xueta_vash_google
               </p>
@@ -67,7 +70,6 @@ export const Login = () => {
               <TextField error={!!errors.email} {...register("email")} label="Email" margin="normal" />
               {errors.email && <span className={styles.errorMessage}>{errors.email.message}</span>}
               <TextField type="password" label="Password" margin="normal" {...register("password")} />
-              {/*{errors.password && <span className={styles.errorMessage}>{errors.password.message}</span>}*/}
               {errors.password && (
                 <span className={styles.errorMessage}>{"Password must be at least 3 characters long"}</span>
               )}
