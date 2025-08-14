@@ -16,9 +16,11 @@ export const Main = () => {
   const isLoggedIn = useAppSelector(selectIsLoggedIn)
   const navigate = useNavigate()
 
-  if (!isLoggedIn) {
-    navigate(Path.Login)
-  }
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate(Path.Login)
+    }
+  }, [isLoggedIn, navigate])
 
   useEffect(() => {
     dispatch(fetchTodoListsTC())
