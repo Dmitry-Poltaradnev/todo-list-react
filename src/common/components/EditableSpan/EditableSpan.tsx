@@ -1,14 +1,17 @@
 import React, { ChangeEvent, useState } from "react"
 import TextField from "@mui/material/TextField"
 import { RequestStatus } from "../../../features/todolists/model/app-slice"
+import { TaskStatus } from "../../../features/todolists/api/tasksApi.types"
+import s from "../../../features/todolists/ui/Todolists/Todolist/Tasks/Tasks.module.css"
 
 type EditableSpanPropsType = {
   changeTitleHandler: (newTitle: string) => void
   oldTitle: string
   entityStatus: RequestStatus
+  taskStatus?: TaskStatus
 }
 
-export const EditableSpan = ({ oldTitle, changeTitleHandler, entityStatus }: EditableSpanPropsType) => {
+export const EditableSpan = ({ oldTitle, changeTitleHandler, entityStatus, taskStatus }: EditableSpanPropsType) => {
   const [editMode, setEditMode] = useState<boolean>(false)
 
   const [newTitle, setNewTitle] = useState<string>(oldTitle)
@@ -38,6 +41,8 @@ export const EditableSpan = ({ oldTitle, changeTitleHandler, entityStatus }: Edi
       variant="outlined"
     />
   ) : (
-    <span onDoubleClick={switchStateMode}>{oldTitle}</span>
+    <span className={taskStatus === TaskStatus.Complete ? s.finishedTask : undefined} onDoubleClick={switchStateMode}>
+      {oldTitle}
+    </span>
   )
 }

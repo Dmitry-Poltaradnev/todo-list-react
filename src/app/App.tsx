@@ -12,7 +12,6 @@ function App() {
   useEffect(() => {
     dispatch(meTC())
   }, [dispatch])
-
   return (
     <div className={s.App}>
       <ErrorSnackBar />

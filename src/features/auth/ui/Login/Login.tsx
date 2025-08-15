@@ -8,14 +8,10 @@ import FormLabel from "@mui/material/FormLabel"
 import TextField from "@mui/material/TextField"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import styles from "./Login.module.css"
-import { loginTC, selectIsLoggedIn } from "../../../todolists/model/auth-slice"
-import { useNavigate } from "react-router-dom"
+import { loginTC } from "../../../todolists/model/auth-slice"
 import { useAppDispatch } from "../../../../common/hooks/useAppDispatch"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useAppSelector } from "../../../../common/hooks/useAppSelector"
-import { Path } from "../../../../common/routing/Routing"
-import { useEffect } from "react"
 
 const loginScheme = z.object({
   email: z.email(),
@@ -40,21 +36,10 @@ export const Login = () => {
 
   const dispatch = useAppDispatch()
 
-  const navigate = useNavigate()
-
-  const isLoggedIn = useAppSelector(selectIsLoggedIn)
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate(Path.Main)
-    }
-  }, [isLoggedIn, navigate])
-
   const onSubmit: SubmitHandler<LoginFormType> = (data: LoginFormType) => {
     dispatch(loginTC({ data }))
     // reset()
   }
-
   return (
     <Grid container justifyContent={"center"}>
       <form onSubmit={handleSubmit(onSubmit)}>
